@@ -16,3 +16,11 @@ Hãy làm những gì bạn cho là tốt nhất. Tôi tin bạn <3 làm đượ
 ## Prompt 3
 
 @2giosangmitom-commit
+
+## Prompt 4
+
+Màn hình main menu đang có 2 nhân vật là thánh gióng và thằng giặc méo gì đó đang bay trên trời, hãy sửa lại cho tôi.
+
+## Prompt 5
+
+@2giosangmitom-commit

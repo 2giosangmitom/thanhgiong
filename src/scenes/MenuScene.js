@@ -9,7 +9,7 @@ import { buildMenuLayers } from '../art/backgrounds.js';
 import { frameTile, drawSprite } from '../art/sheet.js';
 import { playMusic } from '../audio/music.js';
 import { play } from '../audio/sfx.js';
-import { fxLeaves } from '../fx/fx.js';
+import { fxLeaves, drawShadow } from '../fx/fx.js';
 import { withUI, text, brushBand } from '../ui/draw2d.js';
 import { drawSeal } from '../art/props.js';
 import { openPanel, closePanel, makeButton } from '../ui/panels.js';
@@ -49,16 +49,19 @@ export class MenuScene
             drawTile(p, vec2(15), assets.drumSun, rgb(.72, .29, .23, .2), time * .05);
             drawTile(p, vec2(8.5), assets.drumSun, rgb(.2, .15, .14, .12), -time * .08);
         });
-        // Gióng (trái) và bóng tướng giặc (phải)
-        new ScreenProp(vec2(-10.5, -3.4), -950, p =>
+        // Gióng (trái) và bóng tướng giặc (phải): đứng trên mặt đất của lớp gần (y ≈ -0.5)
+        const feetY = -.5 - CAM_Y;
+        new ScreenProp(vec2(-10.5, feetY), -950, p =>
         {
             const sh = assets.giong, k = (time * 4 | 0) % 2;
+            drawShadow(p, 3.4, .45);
             drawSprite(sh, frameTile(sh, 'cheer', k), p, false, new Color(1, 1, 1, 1), undefined, 1.55);
         });
-        new ScreenProp(vec2(11, -3.4), -955, p =>
+        new ScreenProp(vec2(11, feetY), -955, p =>
         {
             const sh = assets.boss;
-            drawSprite(sh, frameTile(sh, 'idle', (time * 4 | 0) % 4), p, true, new Color(.25, .2, .22, .75), undefined, 1.05);
+            drawShadow(p, 4.8, .4);
+            drawSprite(sh, frameTile(sh, 'idle', (time * 4 | 0) % 4), p, true, new Color(.32, .27, .28, 1), undefined, 1.05);
         });
         fxLeaves(vec2(0, 14), vec2(40, 2), 2.5);
 
