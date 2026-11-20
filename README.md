@@ -35,6 +35,15 @@ npm run preview   # xem thử bản build
 - Có các bảng Tạm dừng, Thất bại, Qua màn, Chiến thắng và Hướng dẫn.
 - **Nhạc nền:** `HonPhuDong` (menu, mở đầu, mini game) → `DongSonChienKhuc` (màn 1) → `SaintGiong` (màn 2) → `TreXanhVuotNangMoi` (cảnh cuối). File nằm trong `music/`.
 
+## Poster
+
+Poster 16:9 nằm trong thư mục `poster/`:
+
+- `thanh-giong-poster.png` (3840×2160)
+- `thanh-giong-poster-1080p.png` (1920×1080)
+
+Poster được vẽ bằng chính bộ bút mực Canvas2D và nhân vật của game. Muốn chỉnh rồi xuất lại: chạy `npm run dev`, mở `/poster.html`, bấm **Tải PNG**. Mã nguồn ở `src/poster/poster.js`.
+
 ## Kỹ thuật
 
 - **Đồ hoạ:** toàn bộ nhân vật, đạo cụ và nền đều vẽ bằng Canvas2D. Bộ "bút mực" tạo nét run tay, vân giấy và hoa văn trống đồng. Nhân vật được dựng theo kiểu rối giấy (khớp xương + pose) rồi bake thành spritesheet (`TextureInfo`) để vẽ bằng WebGL.

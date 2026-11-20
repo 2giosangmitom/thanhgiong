@@ -39,7 +39,7 @@ export function layerPoint(layer, px, py)
 }
 
 // ------------------------------------------------------------ các nét vẽ dùng chung
-function gradient(ctx, W, H, stops)
+export function gradient(ctx, W, H, stops)
 {
     const g = ctx.createLinearGradient(0, 0, 0, H);
     stops.forEach(([t, c]) => g.addColorStop(t, c));
@@ -59,14 +59,14 @@ function ridge(W, baseY, amp, waves, phase = 0)
     return pts;
 }
 
-function hills(ctx, W, H, baseY, amp, waves, fill, phase, line = 3)
+export function hills(ctx, W, H, baseY, amp, waves, fill, phase, line = 3)
 {
     const r = ridge(W, baseY, amp, waves, phase);
     shape(ctx, [[-20, H + 20], ...r.map(([x, y]) => [x, y]), [W + 20, H + 20]], fill, { line, jitter: 1.2, sharp: false });
     return r;
 }
 
-function sun(ctx, x, y, r, fill, glow)
+export function sun(ctx, x, y, r, fill, glow)
 {
     const g = ctx.createRadialGradient(x, y, r * .5, x, y, r * 3);
     g.addColorStop(0, glow); g.addColorStop(1, 'rgba(0,0,0,0)');
@@ -74,7 +74,7 @@ function sun(ctx, x, y, r, fill, glow)
     ell(ctx, x, y, r, r, fill, { line: 3, sides: 28, wob: .015 });
 }
 
-function cloud(ctx, x, y, s, fill = 'rgba(255,248,230,.85)')
+export function cloud(ctx, x, y, s, fill = 'rgba(255,248,230,.85)')
 {
     const pts = [];
     for (let i = 0; i < 9; i++)
@@ -87,7 +87,7 @@ function cloud(ctx, x, y, s, fill = 'rgba(255,248,230,.85)')
     stroke(ctx, [[x - 50 * s, y - 2 * s], [x + 30 * s, y - 4 * s]], 1.5, 'rgba(53,44,42,.3)', 1);
 }
 
-function bird(ctx, x, y, s)
+export function bird(ctx, x, y, s)
 {
     stroke(ctx, [[x - 8 * s, y - 3 * s], [x - 3 * s, y - 5 * s], [x, y], [x + 3 * s, y - 5 * s], [x + 8 * s, y - 3 * s]], 1.8 * s, INK, .3, .8);
 }
@@ -113,7 +113,7 @@ function grassLine(ctx, W, y, color = '#4F6B3E', n = 140, h = 14)
     }
 }
 
-function rock(ctx, x, y, w, h, fill = '#7C7A72')
+export function rock(ctx, x, y, w, h, fill = '#7C7A72')
 {
     shape(ctx, [[x - w / 2, y], [x - w * .42, y - h * .6], [x - w * .1, y - h], [x + w * .3, y - h * .85], [x + w / 2, y - h * .3], [x + w * .45, y]], fill, { line: 3, jitter: 1.2 });
     stroke(ctx, [[x - w * .1, y - h * .85], [x, y - h * .3]], 1.6, 'rgba(53,44,42,.5)', .8);
@@ -186,7 +186,7 @@ function dinh(ctx, x, y, s)
         stroke(ctx, [[x + d * 14 * s, y - 154 * s], [x + d * 30 * s, y - 166 * s], [x + d * 44 * s, y - 158 * s], [x + d * 52 * s, y - 166 * s]], 4 * s, '#4A6B4A', .6);
 }
 
-function bambooClump(ctx, x, y, n, h, color, leaves = true)
+export function bambooClump(ctx, x, y, n, h, color, leaves = true)
 {
     for (let i = 0; i < n; i++)
     {
@@ -197,7 +197,7 @@ function bambooClump(ctx, x, y, n, h, color, leaves = true)
 }
 
 /** Tán lá tre (đám mây lá) */
-function leafCanopy(ctx, x, y, r, color)
+export function leafCanopy(ctx, x, y, r, color)
 {
     for (let i = 0; i < 16; i++)
     {

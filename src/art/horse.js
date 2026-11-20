@@ -110,3 +110,6 @@ export function bakeHorse()
         },
     });
 }
+
+// dùng cho poster
+export { GALLOP, STAND, FLY, riderArmor, riderFree, riderFly };

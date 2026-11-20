@@ -214,10 +214,10 @@ Mỗi màn là một chồng `ParallaxLayer` vẽ tay bằng Canvas2D. Hệ số
 
 | Cảnh | Bài |
 |---|---|
-| Menu chính (phát ngay khi mở web), mở đầu, mini game ăn cơm | `HonPhuDong.wav` — Hồn Phù Đổng |
-| Màn 1 — Phù Đổng | `DongSonChienKhuc.wav` — Đông Sơn Chiến Khúc |
-| Màn 2 — Sóc Sơn | `SaintGiong.wav` — Saint Gióng |
-| Cảnh cuối (ngựa sắt bay về trời + bô lão kể chuyện) | `TreXanhVuotNangMoi.wav` — Tre Xanh Vượt Nắng Mới |
+| Menu chính (phát ngay khi mở web), mở đầu, mini game ăn cơm | `HonPhuDong.mp3` — Hồn Phù Đổng |
+| Màn 1 — Phù Đổng | `DongSonChienKhuc.mp3` — Đông Sơn Chiến Khúc |
+| Màn 2 — Sóc Sơn | `SaintGiong.mp3` — Saint Gióng |
+| Cảnh cuối (ngựa sắt bay về trời + bô lão kể chuyện) | `TreXanhVuotNangMoi.mp3` — Tre Xanh Vượt Nắng Mới |
 
 - Các đoạn nhạc ngắn (khải hoàn khi qua màn/hạ boss, nhạc buồn khi thua) **tự sinh bằng code**. Bài được soạn theo thang ngũ cung (Do Re Fa Sol La): sáo trúc, đàn gảy, trống cái, trống cơm, phách, cồng, cùng guitar méo tiếng kiểu "metal remix". Các nốt được render sẵn bằng `zzfxG` thành buffer stereo lặp liền mạch. Có các bài: Menu, Màn 1, Màn 2, Màn 2 – pha 2 (dồn dập hơn), Chiến thắng, Thất bại.
 - Hiệu ứng âm thanh: ZzFX (whoosh, clang, tre bật, trống, cồng, gầm...). Chuỗi `AudioEffects`: vang (reverb) cho trống, cồng và nhạc; bộ nén ở kênh master; bộ lọc thông thấp "bóp tiếng" khi tạm dừng hoặc thua.

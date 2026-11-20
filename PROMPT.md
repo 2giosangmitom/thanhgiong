@@ -51,3 +51,15 @@ Ending: TreXanhVuotNangMoi
 ## Prompt 10
 
 @2giosangmitom-commit
+
+## Prompt 11
+
+Các file âm thanh khá nặng, bạn có thể tối ưu dung lượng được không?
+
+## Prompt 12
+
+Hãy xoá các file docx và các file cũ wav đi, chỉ giữ mp3. Và thiết kế poster cho game này, yêu cầu tỉ lệ 16:9.
+
+## Prompt 13
+
+@2giosangmitom-commit

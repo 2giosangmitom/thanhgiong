@@ -3,10 +3,10 @@
 import { Sound, zzfxG } from 'littlejsengine';
 import { FX } from './sfx.js';
 // nhạc thu sẵn (Vite đóng gói file vào bản build)
-import honPhuDongUrl from '../../music/HonPhuDong.wav';
-import dongSonUrl from '../../music/DongSonChienKhuc.wav';
-import saintGiongUrl from '../../music/SaintGiong.wav';
-import treXanhUrl from '../../music/TreXanhVuotNangMoi.wav';
+import honPhuDongUrl from '../../music/HonPhuDong.mp3';
+import dongSonUrl from '../../music/DongSonChienKhuc.mp3';
+import saintGiongUrl from '../../music/SaintGiong.mp3';
+import treXanhUrl from '../../music/TreXanhVuotNangMoi.mp3';
 
 /**
  * Nhạc nền theo thứ tự trò chơi (file thu sẵn trong music/):
