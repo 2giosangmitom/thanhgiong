@@ -4,11 +4,20 @@ import { Sound, zzfxG } from 'littlejsengine';
 import { FX } from './sfx.js';
 // nhạc thu sẵn (Vite đóng gói file vào bản build)
 import honPhuDongUrl from '../../music/HonPhuDong.wav';
+import dongSonUrl from '../../music/DongSonChienKhuc.wav';
+import saintGiongUrl from '../../music/SaintGiong.wav';
 import treXanhUrl from '../../music/TreXanhVuotNangMoi.wav';
 
-/** Bài phát từ file; nếu không tải được thì dùng bài tự sinh thay thế */
+/**
+ * Nhạc nền theo thứ tự trò chơi (file thu sẵn trong music/):
+ *   Menu chính (+ mở đầu, mini game ăn cơm): Hồn Phù Đổng
+ *   Màn 1: Đông Sơn Chiến Khúc · Màn 2: Saint Gióng · Cảnh cuối: Tre Xanh Vượt Nắng Mới
+ * Nếu không tải được file thì dùng bài tự sinh thay thế.
+ */
 const FILE_SONGS = {
     menu: { url: honPhuDongUrl, fallback: 'menuGen' },
+    level1: { url: dongSonUrl, fallback: 'level1Gen' },
+    level2: { url: saintGiongUrl, fallback: 'level2Gen' },
     ending: { url: treXanhUrl, fallback: 'victory' },
 };
 
@@ -109,8 +118,8 @@ const SONGS = {
                 'K.......L...M...' + 'L.......K...J...' + 'I...J...H...G...' + 'F...............' },
         ],
     }),
-    // Màn 1: hành khúc trống dân gian + sáo, nửa sau thêm guitar remix
-    level1: () => render({
+    // Màn 1 (dự phòng): hành khúc trống dân gian + sáo, nửa sau thêm guitar remix
+    level1Gen: () => render({
         bpm: 112, bars: 8, loop: true, gain: .62, tracks: [
             { inst: 'kick', vol: 1, pat: rep('x...x...x..x....', 7) + 'x...x...x.x.xxxx' },
             { inst: 'tom', vol: .6, pan: .2, pat: rep('..o...o.o.o...oo', 7) + 'oooooooo........' },
@@ -125,8 +134,8 @@ const SONGS = {
                 '.'.repeat(64) + 'F.FF..F.F.FF..H.' + 'H.HH..H.H.HH..F.' + 'D.DD..D.D.DD..F.' + 'F.F.F.F.FFFFFFFF' },
         ],
     }),
-    // Màn 2: quyết chiến — trống dồn + guitar méo nặng
-    level2: () => render({
+    // Màn 2 (dự phòng): quyết chiến — trống dồn + guitar méo nặng
+    level2Gen: () => render({
         bpm: 132, bars: 8, loop: true, gain: .58, tracks: [
             { inst: 'gong', vol: .6, pat: 'x' + '.'.repeat(127) },
             { inst: 'kick', vol: 1, pat: rep('x.x...x.x.x...x.', 8) },
@@ -138,22 +147,6 @@ const SONGS = {
             { inst: 'sao', vol: .6, pan: .15, pat:
                 'J.....I.J...K...' + 'J...I...F.......' + 'J.....I.J...L...' + 'K...J...I.......' +
                 'M.....L.K...L...' + 'K...J...I.......' + 'J...K...L...K...' + 'J...............' },
-        ],
-    }),
-    // Pha 2 của boss: dồn dập hơn, thêm cồng và guitar ngân
-    level2b: () => render({
-        bpm: 132, bars: 8, loop: true, gain: .55, tracks: [
-            { inst: 'gong', vol: .7, pat: 'x' + '.'.repeat(63) },
-            { inst: 'kick', vol: 1, pat: rep('x.xxx.x.x.xxx.xx', 8) },
-            { inst: 'tom', vol: .7, pan: .25, pat: rep('..o.o..oo.o.oooo', 8) },
-            { inst: 'phach', vol: .7, pan: -.3, pat: rep('....x.......x.x.', 8) },
-            { inst: 'hat', vol: .7, pan: .3, pat: rep('xxxxxxxxxxxxxxxx', 8) },
-            { inst: 'bass', vol: .85, transpose: -12, pat: rep('E.EEE.EEE.EED.DD', 4) + rep('C.CCC.CCD.DDE.EE', 4) },
-            { inst: 'gtr', vol: .62, pan: -.2, chord: [0, 7], transpose: -12, pat: rep('EEEEEEEEEEEEDDDD', 4) + rep('CCCCCCCCDDDDEEEE', 4) },
-            { inst: 'gtrL', vol: .35, pan: .2, chord: [0, 7, 12], pat: 'J...............' + 'I...............' + 'L...............' + 'K...............' + 'M...............' + 'L...............' + 'O...............' + 'M...............' },
-            { inst: 'sao', vol: .55, pan: .1, pat:
-                'M.L.K.L.M...O...' + 'M.L.K.J.K.......' + 'M.L.K.L.M...O...' + 'O.M.L.K.J.......' +
-                'J.K.L.M.O.M.L.K.' + 'L.K.J.I.J.......' + 'J.K.L.M.O...M...' + 'O...............' },
         ],
     }),
     // Chiến thắng: khúc khải hoàn (không lặp)

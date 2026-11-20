@@ -18,26 +18,38 @@ export function bakeSheet(def)
     const [fw, fh] = def.frame, [ox, oy] = def.origin;
     const RES = def.res || RES_DEFAULT;
     const names = Object.keys(def.clips);
-    const cols = Math.max(...names.map(n => def.clips[n].count));
+    const cols = def.cols || 6;
+    // xếp các clip vào lưới: clip nào vừa phần còn lại của hàng thì đặt tiếp, không thì xuống hàng mới
+    const place = {};
+    let row = 0, col = 0;
+    for (const name of names)
+    {
+        const n = def.clips[name].count;
+        if (col + n > cols) { row++; col = 0; }
+        place[name] = [col, row];
+        col += n;
+    }
+    const rows = row + 1;
     const W = fw * RES, H = fh * RES;
-    const canvas = makeCanvas(cols * W, names.length * H);
+    const canvas = makeCanvas(cols * W, rows * H);
     const ctx = canvas.getContext('2d');
 
-    names.forEach((name, row) =>
+    names.forEach((name, ci) =>
     {
-        const clip = def.clips[name];
+        const clip = def.clips[name], [c0, r] = place[name];
         for (let i = 0; i < clip.count; i++)
         {
-            seed((def.seed || 1) * 1000 + row * 50 + i);
+            const x0 = (c0 + i) * W, y0 = r * H;
+            seed((def.seed || 1) * 1000 + ci * 50 + i);
             ctx.save();
-            ctx.beginPath(); ctx.rect(i * W, row * H, W, H); ctx.clip();
-            ctx.translate(i * W + ox * RES, row * H + oy * RES);
+            ctx.beginPath(); ctx.rect(x0, y0, W, H); ctx.clip();
+            ctx.translate(x0 + ox * RES, y0 + oy * RES);
             ctx.scale(RES, RES);
             def.draw(ctx, clip.pose(i, clip.count), name);
             ctx.restore();
             // vân giấy trên nhân vật
-            seed(row * 77 + i);
-            grain(ctx, i * W, row * H, W, H, .5, RES * .8);
+            seed(ci * 77 + i);
+            grain(ctx, x0, y0, W, H, .5, RES * .8);
         }
     });
 
@@ -50,14 +62,12 @@ export function bakeSheet(def)
         clips: {},
         tiles: {},
     };
-    names.forEach((name, row) =>
+    for (const name of names)
     {
-        const c = def.clips[name];
-        const t = tile(vec2(0, row), vec2(W, H), texture);
-        t.setColumns?.(cols);
-        sheet.tiles[name] = t;
-        sheet.clips[name] = c;
-    });
+        const [c0, r] = place[name];
+        sheet.tiles[name] = tile(vec2(c0, r), vec2(W, H), texture);
+        sheet.clips[name] = def.clips[name];
+    }
     return sheet;
 }
 

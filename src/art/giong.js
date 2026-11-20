@@ -171,6 +171,17 @@ export function drawGiong(ctx, p)
     drawArm(ctx, sF[0], sF[1], p.armF ?? .3, p.elbowF ?? -.6, '#A8432F', SKIN, armor);
     if (!p.rodBehind && !p.noRod) drawRod(ctx, hand[0], hand[1], p.rod ?? -2.6, 74, p.glow);
     ell(ctx, hand[0], hand[1], 5, 5, SKIN, { line: 2.5 });
+    // tô cơm trên tay (mini game ăn cơm)
+    if (p.bowl)
+    {
+        const [bx, by] = hand;
+        ell(ctx, bx + 2, by - 9, 10, 6, '#FBF7EC', { line: 1.8 });
+        shape(ctx, [[bx - 11, by - 7], [bx + 15, by - 7], [bx + 10, by + 3], [bx - 6, by + 3]], '#3E6E8E', { line: 2 });
+        stroke(ctx, [[bx - 8, by - 4], [bx + 12, by - 4]], 1.2, '#F1E1BE', .2);
+        // đũa
+        stroke(ctx, [[bx + 4, by - 10], [bx + 16, by - 24 - (p.bowl > 1 ? 4 : 0)]], 1.8, '#8C5A2E', .2);
+        stroke(ctx, [[bx + 7, by - 9], [bx + 19, by - 22 - (p.bowl > 1 ? 4 : 0)]], 1.8, '#8C5A2E', .2);
+    }
 }
 
 /** Định nghĩa pose cho từng clip */
@@ -210,6 +221,7 @@ export function bakeGiong()
             // cảnh cuối: cởi giáp, bỏ roi, bay về trời
             free: { count: 4, time: .2, pose: (i, n) => { const t = i / n * P * 2; return { noArmor: true, noRod: true, bob: Math.sin(t) * 1.2, armF: .15, elbowF: -.25, armB: -.15, elbowB: .3, legF: .1, kneeF: .05, legB: -.1, kneeB: .05, scarf: t, lean: -.03 }; } },
             fly: { count: 3, time: .16, pose: i => ({ noArmor: true, noRod: true, armF: 1.95 + i * .06, elbowF: .25, armB: -2.0 - i * .06, elbowB: -.25, legF: .25, kneeF: .5, legB: .05, kneeB: .6, lean: -.08, scarf: i * 2, wind: -1.5, face: 'shout', bob: -i }) },
+            eat: { count: 2, time: .1, pose: i => ({ noArmor: true, noRod: true, bowl: 1 + i, armF: i ? 1.7 : 1.05, elbowF: i ? -2.5 : -1.7, armB: .5, elbowB: -.9, face: i ? 'shout' : 'normal', lean: i ? -.08 : .02, bob: i ? -1 : 0, scarf: i, legF: .12, kneeF: .05, legB: -.12, kneeB: .05 }) },
             dead: { count: 1, pose: () => ({ lean: -.2, armF: -1.2, elbowF: -.3, rod: -1.6, legF: .2, kneeF: .6, legB: .1, kneeB: .7, armB: 1.3, elbowB: .2, face: 'hurt', bob: 0 }) },
         },
     });

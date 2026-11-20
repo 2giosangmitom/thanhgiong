@@ -30,9 +30,10 @@ npm run preview   # xem thử bản build
 
 - **Màn 1 — Phù Đổng rực lửa:** hạ 12 lính giặc. Lính xuất hiện dần từ hai phía, tối đa 2, 3 rồi 4 lính cùng lúc.
 - **Màn 2 — Sóc Sơn: quyết chiến:** đấu Thiết Giáp Tướng (20 HP, 2 giai đoạn). Mỗi nhát đao đều có vùng cảnh báo trên mặt đất.
-- **Cảnh cuối:** Gióng lên đỉnh Sóc Sơn, cởi giáp sắt, để lại roi sắt rồi bay về trời.
-- Có cảnh mở đầu, các bảng Tạm dừng, Thất bại, Qua màn, Chiến thắng và Hướng dẫn.
-- **Nhạc:** `music/HonPhuDong.wav` (menu), `music/TreXanhVuotNangMoi.wav` (cảnh cuối); nhạc trong trận tự sinh.
+- **Mở đầu + mini game "Giúp Gióng ăn mau lớn":** 10 giây bấm `Space` liên tục, mỗi 4 lần bấm là một tô cơm; mỗi tô +5 Nộ Khí khởi đầu.
+- **Cảnh cuối:** Gióng cưỡi ngựa sắt lên đỉnh Sóc Sơn, cởi giáp, để lại roi sắt rồi bay về trời; tiếp theo là cảnh phim cũ bô lão kể chuyện Thánh Gióng cho trẻ con trong làng.
+- Có các bảng Tạm dừng, Thất bại, Qua màn, Chiến thắng và Hướng dẫn.
+- **Nhạc nền:** `HonPhuDong` (menu, mở đầu, mini game) → `DongSonChienKhuc` (màn 1) → `SaintGiong` (màn 2) → `TreXanhVuotNangMoi` (cảnh cuối). File nằm trong `music/`.
 
 ## Kỹ thuật
 

@@ -30,11 +30,11 @@
 Giặc Tàu tràn đến làng Phù Đổng, đốt phá và uy hiếp dân làng. Nghe tiếng kêu cứu, Gióng đứng dậy, khoác giáp, cầm roi sắt ra trận. Sau khi đẩy lùi đợt quân đầu tiên, Gióng truy đuổi quân xâm lược đến chân núi Sóc Sơn. Tại đây, **Thiết Giáp Tướng** chặn đường. Gióng phải kết hợp roi sắt và sức mạnh tre thần để đánh bại hắn, mang lại bình yên cho quê hương.
 
 **Mở đầu:** một màn hình tranh minh họa với câu chữ ngắn: “Giặc kéo đến Phù Đổng. Tiếng trống nổi lên. Gióng cầm roi sắt xuất trận!”  
-**Kết thúc:** boss gục xuống, quân giặc rút lui; nền trời sáng dần và hiện chữ “ĐẤT NƯỚC YÊN BÌNH — CHIẾN THẮNG!”. Sau đó là **cảnh cuối** trên đỉnh Sóc Sơn lúc bình minh, giữa biển mây, với nhạc nền *Tre Xanh Vượt Nắng Mới*:
-1. “Giặc tan, Gióng một mình lên đỉnh núi Sóc Sơn.” — Gióng đi lên giữa đỉnh núi.
-2. “Gióng cởi áo giáp sắt, để lại roi sắt cho quê hương...” — áo giáp hoạ tiết trống đồng và roi sắt nằm lại trên đá.
-3. “...rồi bay thẳng về trời.” — cột sáng từ trời rọi xuống, Gióng bay lên; camera đi theo, xuyên qua mây, trời chuyển dần sang đêm sao.
-4. “Nhân dân nhớ ơn, tôn Gióng là Phù Đổng Thiên Vương.” — một ngôi sao mới loé sáng, hiện chữ **PHÙ ĐỔNG THIÊN VƯƠNG**, rồi đến bảng Chiến thắng (Chơi lại từ đầu / Về menu). Nhấn `Enter` để bỏ qua.
+**Mini game "Giúp Gióng ăn mau lớn"** (sau phần mở đầu, trước màn 1): dân làng góp gạo nuôi Gióng. Trong **10 giây**, bấm `Space` càng nhanh thì Gióng ăn càng nhiều tô cơm (4 lần bấm = 1 tô). Mỗi tô cơm cho **+5 Nộ Khí khởi đầu** (tối đa 100) và Gióng lớn dần. Hết giờ, Gióng vươn vai thành tráng sĩ rồi xuất trận.
+
+**Kết thúc (2 phần, nhạc *Tre Xanh Vượt Nắng Mới*):**
+1. **Đỉnh Sóc Sơn lúc bình minh:** giặc tan, Gióng cưỡi **ngựa sắt** (bờm và đuôi lửa, phun lửa) phi lên đỉnh núi, cởi áo giáp sắt, để lại roi sắt, rồi cả người lẫn ngựa bay theo cột sáng về trời. Camera bay theo xuyên qua mây, một ngôi sao mới loé sáng, hiện chữ **PHÙ ĐỔNG THIÊN VƯƠNG**.
+2. **Nhiều năm sau — dạng phim cũ** (sepia, hạt phim, vết xước, khung phim màn ảnh rộng, phụ đề): đêm trăng dưới gốc đa sân đình, bên bếp lửa, **bô lão** (khăn xếp, áo the, râu bạc) kể chuyện Thánh Gióng cho **các em nhỏ** trong làng. Các em hỏi “Gióng đi đâu?”, “Gióng có còn ở trên trời không?”. Bô lão đáp: tinh thần Gióng sống trong mỗi người con đất Việt. Hiện chữ **HẾT**, rồi đến bảng Chiến thắng.
 
 ## 4. Luật chơi chung
 
@@ -210,8 +210,16 @@ Mỗi màn là một chồng `ParallaxLayer` vẽ tay bằng Canvas2D. Hệ số
 - Tre Thần: tiếng tre bật lên + bụi đất xanh/nâu.
 - Trúng đòn: nhân vật nhấp nháy trong thời gian bất tử, âm thanh ngắn.
 - Boss Phase 2: trống dồn một nhịp, ánh đỏ lóe nhẹ.
-- Nhạc nền thu sẵn (thư mục `music/`): **Hồn Phù Đổng** (`HonPhuDong.wav`) ở menu chính; **Tre Xanh Vượt Nắng Mới** (`TreXanhVuotNangMoi.wav`) ở cảnh cuối. Nếu không tải được file thì dùng nhạc tự sinh thay thế.
-- Nhạc trong trận: **tự sinh bằng code**, không cần file. Bài được soạn theo thang ngũ cung (Do Re Fa Sol La): sáo trúc, đàn gảy, trống cái, trống cơm, phách, cồng, cùng guitar méo tiếng kiểu "metal remix". Các nốt được render sẵn bằng `zzfxG` thành buffer stereo lặp liền mạch. Có các bài: Menu, Màn 1, Màn 2, Màn 2 – pha 2 (dồn dập hơn), Chiến thắng, Thất bại.
+- Nhạc nền thu sẵn (thư mục `music/`), nếu không tải được file thì dùng nhạc tự sinh thay thế:
+
+| Cảnh | Bài |
+|---|---|
+| Menu chính (phát ngay khi mở web), mở đầu, mini game ăn cơm | `HonPhuDong.wav` — Hồn Phù Đổng |
+| Màn 1 — Phù Đổng | `DongSonChienKhuc.wav` — Đông Sơn Chiến Khúc |
+| Màn 2 — Sóc Sơn | `SaintGiong.wav` — Saint Gióng |
+| Cảnh cuối (ngựa sắt bay về trời + bô lão kể chuyện) | `TreXanhVuotNangMoi.wav` — Tre Xanh Vượt Nắng Mới |
+
+- Các đoạn nhạc ngắn (khải hoàn khi qua màn/hạ boss, nhạc buồn khi thua) **tự sinh bằng code**. Bài được soạn theo thang ngũ cung (Do Re Fa Sol La): sáo trúc, đàn gảy, trống cái, trống cơm, phách, cồng, cùng guitar méo tiếng kiểu "metal remix". Các nốt được render sẵn bằng `zzfxG` thành buffer stereo lặp liền mạch. Có các bài: Menu, Màn 1, Màn 2, Màn 2 – pha 2 (dồn dập hơn), Chiến thắng, Thất bại.
 - Hiệu ứng âm thanh: ZzFX (whoosh, clang, tre bật, trống, cồng, gầm...). Chuỗi `AudioEffects`: vang (reverb) cho trống, cồng và nhạc; bộ nén ở kênh master; bộ lọc thông thấp "bóp tiếng" khi tạm dừng hoặc thua.
 - Cảm giác đòn đánh: hitstop (`timeScale = 0` trong vài chục ms), rung camera, chớp màn hình (đỏ khi bị đánh, trắng khi kết liễu), tách màu chromatic khi tung Tre Thần, slow-mo khi hạ boss, số sát thương bay lên, vết mực và tia lửa.
 
@@ -240,17 +248,22 @@ Mỗi màn là một chồng `ParallaxLayer` vẽ tay bằng Canvas2D. Hệ số
 ## 10. Luồng game
 
 ```text
-MENU
+MENU (nhạc: Hồn Phù Đổng — phát ngay khi mở web)
   ├─ Hướng dẫn
   └─ Bắt đầu
        ↓
-MÀN 1 — PHÙ ĐỔNG
+MỞ ĐẦU (giặc kéo đến, cậu bé Gióng cất tiếng)
+       ↓
+MINI GAME: GIÚP GIÓNG ĂN MAU LỚN (10 giây, bấm Space) → Gióng vươn vai
+       ↓
+MÀN 1 — PHÙ ĐỔNG (nhạc: Đông Sơn Chiến Khúc)
   ├─ HP = 0 → Game Over → Chơi lại màn 1
   └─ Hạ đủ 12 lính → Qua màn
                          ↓
-MÀN 2 — SÓC SƠN
+MÀN 2 — SÓC SƠN (nhạc: Saint Gióng)
   ├─ HP = 0 → Game Over → Chơi lại màn 2
-  └─ Boss HP = 0 → Chiến thắng → Cảnh cuối (Gióng bay về trời) → Menu / Chơi lại từ đầu
+  └─ Boss HP = 0 → Chiến thắng → Ngựa sắt bay về trời → Bô lão kể chuyện (phim cũ) → Menu / Chơi lại từ đầu
+     (nhạc cảnh cuối: Tre Xanh Vượt Nắng Mới)
 ```
 
 ## 11. Yêu cầu kỹ thuật tối giản

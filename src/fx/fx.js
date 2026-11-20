@@ -18,6 +18,13 @@ function postShader(glow)
         // giảm bão hoà (thua) + ấm màu giấy
         'float _l = dot(c.rgb, vec3(.299, .587, .114)); c.rgb = mix(c.rgb, vec3(_l) * vec3(1.06, .98, .88), desat);',
         'c.rgb = mix(c.rgb, c.rgb * vec3(1.04, 1., .92), warm);',
+        // phim cũ: sepia, nhấp nháy, vết xước dọc, hạt phim động
+        'vec3 _s = vec3(dot(c.rgb, vec3(.393, .769, .189)), dot(c.rgb, vec3(.349, .686, .168)), dot(c.rgb, vec3(.272, .534, .131)));' +
+        'c.rgb = mix(c.rgb, min(_s, vec3(1.)), sepia);',
+        'float _ft = floor(iTime * 18.); float _fh = fract(sin(_ft * 12.9898) * 43758.5453);' +
+        'c.rgb *= 1. - film * .1 * _fh;' +
+        'float _sx = fract(sin(_ft * 3.17) * 91.7); c.rgb -= film * .35 * smoothstep(.0018, 0., abs(uv.x - _sx)) * step(.55, _fh);' +
+        'float _fn = fract(sin(dot(floor(p / 2.) + _ft, vec2(12.9898, 78.233))) * 43758.5453); c.rgb += film * (_fn - .5) * .14;',
         // vân giấy tĩnh phủ toàn khung hình
         'vec2 _q = floor(p / 1.5); float _g = fract(sin(dot(_q, vec2(12.9898, 78.233))) * 43758.5453); c.rgb *= .97 + .045 * _g;',
         postProcessVignette(.55, 2.4),
@@ -27,7 +34,7 @@ function postShader(glow)
 export function initPost()
 {
     new PostProcessPlugin(postShader(true));
-    Object.assign(postProcess.values, { chroma: 0, flash: 0, white: 0, desat: 0, warm: .6 });
+    Object.assign(postProcess.values, { chroma: 0, flash: 0, white: 0, desat: 0, warm: .6, sepia: 0, film: 0 });
 }
 
 // tự hạ chất lượng: máy yếu (FPS thấp kéo dài) thì bỏ glow
@@ -45,6 +52,8 @@ export function flash(amount = .35) { const v = pv(); if (v) v.flash = Math.max(
 export function whiteFlash(amount = .8) { const v = pv(); if (v) v.white = Math.max(v.white, amount); }
 export function chroma(amount = .012) { const v = pv(); if (v) v.chroma = Math.max(v.chroma, amount); }
 export function setDesat(d) { const v = pv(); if (v) v.desat = d; }
+/** Bộ lọc phim cũ (0..1) */
+export function setFilm(k) { const v = pv(); if (v) { v.film = k; v.sepia = k * .85; } }
 
 // ------------------------------------------------------------- hitstop / slow-mo
 // timeScale = 0 vẫn chạy tick "đóng băng" 60 lần/giây (gameUpdatePost vẫn gọi) nên dùng cho hitstop;

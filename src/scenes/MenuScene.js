@@ -1,7 +1,7 @@
 // Menu chính: nền giấy dó + núi mực nhiều lớp parallax (camera lia chậm), hoa văn trống đồng xoay
 import {
     vec2, rgb, time, timeReal, FollowCamera, EngineObject, drawTile, lightSystem, uiSystem, UIObject, keyWasPressed, cameraPos,
-    tweenProperty, Ease, Color, setAdditiveBlendMode,
+    tweenProperty, Ease, Color, setAdditiveBlendMode, audioIsRunning,
 } from 'littlejsengine';
 import { CAM_Y, C, PAL } from '../config.js';
 import { game, assets, world } from '../state.js';
@@ -65,15 +65,16 @@ export class MenuScene
         });
         fxLeaves(vec2(0, 14), vec2(40, 2), 2.5);
 
-        if (this.skipPress) this.showButtons();
+        // nhạc menu phát ngay khi mở trang (trình duyệt chỉ cho phát tiếng sau thao tác đầu tiên)
+        playMusic('menu', .7, 1.5);
+        this.showButtons();
     }
 
     showButtons()
     {
         if (this.ready) return;
         this.ready = true;
-        playMusic('menu', .7, 1.5);
-        play('gong');
+        audioIsRunning() && play('gong');
         const root = this.root = new UIObject(vec2(0, 72), vec2(10));
         root.color = rgb(0, 0, 0, 0); root.lineWidth = 0; root.shadowColor = undefined;
         makeButton(root, vec2(0, 0), vec2(270, 46), 'Bắt đầu', () => goIntro(), 1, true);
@@ -118,10 +119,6 @@ export class MenuScene
         // camera lia chậm qua lại để lộ chiều sâu parallax
         this.target.x = Math.sin(time * .12) * 9;
         this.camera.target = this.target;
-        if (!this.ready && (keyWasPressed('Enter') || keyWasPressed('Space') || keyWasPressed('KeyE')))
-        {
-            this.showButtons();
-        }
     }
 
     drawUI()
@@ -137,14 +134,9 @@ export class MenuScene
             text(ctx, 'METAL RISING', 0, 62, 30, PAL.giay, { line: 5 });
             drawSeal(ctx, 300, 34, 26, 'GIÓNG');
             ctx.restore();
-            if (!this.ready)
-            {
-                const a = .5 + .5 * Math.sin(t * 4);
-                brushBand(ctx, W / 2 - 190, 338, 380, 46, 'rgba(53,44,42,.82)', 79);
-                text(ctx, 'Nhấn Enter để bắt đầu', W / 2, 361, 26, '#FFE9A8', { line: 4, alpha: .45 + a * .55 });
-            }
-            else
-                text(ctx, '↑↓ chọn · Enter xác nhận', W / 2, 520, 14, PAL.muc, { line: 0, alpha: .7, shadow: false, weight: 'normal' });
+            if (!audioIsRunning())
+                text(ctx, '♪ Nhấn phím bất kỳ để bật nhạc', W - 24, 36, 15, PAL.son, { align: 'right', line: 0, alpha: .6 + .4 * Math.sin(t * 4), shadow: false });
+            text(ctx, '↑↓ chọn · Enter xác nhận', W / 2, 520, 14, PAL.muc, { line: 0, alpha: .7, shadow: false, weight: 'normal' });
             text(ctx, '“Cầm roi sắt, gọi tre thần, bảo vệ Phù Đổng!”', W / 2, 238, 17, PAL.muc, { line: 0, shadow: false, weight: 'italic', alpha: k });
             if (this.bye) text(ctx, 'Cảm ơn bạn đã chơi! (Hãy đóng thẻ trình duyệt)', W / 2, 330, 20, PAL.son, { line: 0, shadow: false });
         });

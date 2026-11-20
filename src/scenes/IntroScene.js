@@ -1,7 +1,7 @@
 // Cảnh mở đầu: tranh minh hoạ động + chữ chạy kiểu đánh máy
 import { vec2, rgb, timeReal, Timer, FollowCamera, Light, lightSystem, uiSystem, keyWasPressed, tweenProperty, Ease, rand } from 'littlejsengine';
 import { CAM_Y, PAL } from '../config.js';
-import { game, world } from '../state.js';
+import { game, world, assets } from '../state.js';
 import { buildLevel1Layers, layerPoint } from '../art/backgrounds.js';
 import { Player } from '../entities/Player.js';
 import { Soldier } from '../entities/Soldier.js';
@@ -9,9 +9,14 @@ import { playMusic, stopMusic } from '../audio/music.js';
 import { play, S } from '../audio/sfx.js';
 import { fxFire, fxSmoke, fxEmbers, fxSparkle, fxDust, whiteFlash, shake, chroma } from '../fx/fx.js';
 import { withUI, text, brushBand } from '../ui/draw2d.js';
-import { goLevel } from './flow.js';
+import { goFeast } from './flow.js';
+import { SpriteProp } from '../entities/Prop.js';
 
-const LINES = ['Giặc kéo đến Phù Đổng.', 'Tiếng trống nổi lên.', 'Gióng cầm roi sắt xuất trận!'];
+const LINES = [
+    'Giặc kéo đến Phù Đổng. Tiếng trống làng nổi lên.',
+    'Cậu bé Gióng ba tuổi bỗng cất tiếng: “Hãy rèn cho ta ngựa sắt, roi sắt!”',
+    'Dân làng góp gạo nuôi Gióng, mong Gióng mau lớn...',
+];
 
 export class IntroScene
 {
@@ -35,17 +40,18 @@ export class IntroScene
             this.fires.push([v, W * fx, H - 110, new Light(vec2(), 9, rgb(1, .55, .2, .8), 9)]);
         }
         fxEmbers(vec2(0, 5), vec2(60, 8));
-        stopMusic(1);
+        playMusic('menu', .7, 1); // nhạc Hồn Phù Đổng tiếp tục suốt phần mở đầu
 
         this.line = -1; this.lineStart = 0; this.typed = 0; this.done = false;
         this.t = new Timer; this.t.set(0);
         this.events = [
-            [.3, () => { this.next(); for (let i = 0; i < 6; i++) { const s = new Soldier(14 + i * 1.8, 'march'); s.dir = -1; } }],
-            [2.8, () => { this.next(); this.drum(0); }],
-            [3.2, () => this.drum(1)],
-            [3.6, () => this.drum(2)],
-            [4.9, () => this.heroRise()],
-            [8.2, () => this.finish()],
+            [.3, () => { this.next(); for (let i = 0; i < 6; i++) { const s = new Soldier(19 + i * 2.2, 'march'); s.dir = -1; s.stopX = 7.5 + i * 1.7; } }],
+            [.6, () => this.drum(0)],
+            [1, () => this.drum(1)],
+            [1.4, () => this.drum(2)],
+            [3.6, () => this.kidSpeaks()],
+            [7.6, () => this.next()],
+            [11, () => this.finish()],
         ];
     }
 
@@ -58,26 +64,28 @@ export class IntroScene
         chroma(.006);
     }
 
-    heroRise()
+    /** Cậu bé Gióng cất tiếng nói đầu tiên */
+    kidSpeaks()
     {
         this.next();
-        // quân giặc hoảng sợ bỏ chạy
-        for (const e of world.enemies) if (e.alive) { e.mode = 'flee'; e.dir = e.pos.x < 0 ? -1 : 1; }
-        const p = world.player = new Player(0);
-        p.locked = true; p.cheer = true;
-        whiteFlash(.7); shake(.8);
-        play('gong'); play('boom');
-        fxDust(vec2(0, .2), 2.5);
-        fxSparkle(vec2(0, 2.5), 2);
-        tweenProperty(lightSystem, 'ambientColor', rgb(.62, .52, .5), rgb(.86, .76, .68), 1.5);
-        playMusic('level1', .45, 1);
+        this.kid = new SpriteProp(assets.giong, ['free', 'cheer'], vec2(-1, 0), { scale: .55, shadow: 2 });
+        fxSparkle(vec2(-1, 1.2), 1, .12);
+        play('gong'); whiteFlash(.3);
+        tweenProperty(lightSystem, 'ambientColor', rgb(.62, .52, .5), rgb(.8, .7, .62), 1.5);
+        // dân làng kéo đến
+        const v = assets.villagers;
+        this.villagers = [
+            new SpriteProp(v, ['elderIdle'], vec2(-5.5, 0), { scale: 1.1 }),
+            new SpriteProp(v, ['kid0'], vec2(-7.5, 0), { scale: 1 }),
+            new SpriteProp(v, ['kid1'], vec2(-3.3, 0)),
+        ];
     }
 
     finish()
     {
         if (this.done) return;
         this.done = true;
-        goLevel(1);
+        goFeast();
     }
 
     update()
@@ -90,7 +98,7 @@ export class IntroScene
             const n = Math.min(LINES[this.line].length, ((timeReal - this.lineStart) * 28) | 0);
             if (n > this.typed) { this.typed = n; LINES[this.line][n - 1] !== ' ' && S.type?.play(undefined, .6, rand(.9, 1.2)); }
         }
-        if (keyWasPressed('Enter') || keyWasPressed('Escape') || keyWasPressed('Space')) this.finish();
+        if (keyWasPressed('Enter') || keyWasPressed('Escape')) this.finish();
     }
 
     drawUI()
@@ -106,7 +114,7 @@ export class IntroScene
                 {
                     const s = i === this.line ? LINES[i].slice(0, this.typed) : LINES[i];
                     const y = 540 - 96 + i * 32, cur = i === this.line;
-                    text(ctx, s, 80, y, cur ? 26 : 22, cur ? '#FFE9A8' : PAL.giay, { align: 'left', line: 4, alpha: cur ? 1 : .6 });
+                    text(ctx, s, 80, y, cur ? 26 : 22, cur ? '#FFE9A8' : PAL.giay, { align: 'left', line: 4, alpha: cur ? 1 : .6, maxWidth: W - 140 });
                 }
             }
             text(ctx, 'Enter — bỏ qua', W - 20, 24, 14, PAL.giay, { align: 'right', line: 0, alpha: .6, weight: 'normal', shadow: false });

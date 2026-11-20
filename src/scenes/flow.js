@@ -10,6 +10,8 @@ import { MenuScene } from './MenuScene.js';
 import { IntroScene } from './IntroScene.js';
 import { LevelScene } from './LevelScene.js';
 import { EndingScene } from './EndingScene.js';
+import { FeastScene } from './FeastScene.js';
+import { StoryScene } from './StoryScene.js';
 
 function go(makeScene)
 {
@@ -28,7 +30,12 @@ export const goIntro = () => { resetRun(); go(() => new IntroScene); };
 export const goLevel = (level) => go(() => new LevelScene(level));
 /** Cảnh cuối: Gióng bay về trời */
 export const goEnding = () => go(() => new EndingScene);
-export const startRun = () => { resetRun(); game.runStart = performance.now(); go(() => new LevelScene(1)); };
+/** Bô lão kể chuyện (dạng phim) */
+export const goStory = () => go(() => new StoryScene);
+/** Mini game: giúp Gióng ăn mau lớn */
+export const goFeast = () => go(() => new FeastScene);
+/** Chơi lại từ đầu: mở đầu → ăn cơm → màn 1 */
+export const startRun = () => goIntro();
 
 /** Chơi lại màn hiện tại: hồi đầy máu, Nộ Khí trở về giá trị lúc vào màn */
 export function retryLevel()

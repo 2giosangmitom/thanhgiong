@@ -550,3 +550,51 @@ export function buildEndingLayers()
     L.fore = foreLayer('#2F4528', 36);
     return L;
 }
+
+// ------------------------------------------------------------ KỂ CHUYỆN: sân đình dưới gốc đa, đêm trăng (nhiều năm sau)
+export function buildStoryLayers(camY)
+{
+    const L = {};
+    L.sky = makeLayer({
+        y: camY, w: 34, h: 18.5, parallax: 1, order: -1000, res: .9, seed: 41, draw: (ctx, W, H) =>
+        {
+            gradient(ctx, W, H, [[0, '#1C2440'], [.55, '#3A4A6E'], [.85, '#7A6E78'], [1, '#B08A6A']]);
+            for (let i = 0; i < 90; i++) { ctx.fillStyle = `rgba(255,248,220,${rnd(.3, .9)})`; ctx.beginPath(); ctx.arc(rnd(W), rnd(H * .55), rnd(.6, 1.8), 0, TAU); ctx.fill(); }
+            sun(ctx, W * .78, H * .2, 34, '#F6EDC8', 'rgba(250,240,200,.45)');
+            grain(ctx, 0, 0, W, H, .4);
+        },
+    });
+    L.far = makeLayer({
+        y: 3.2, w: 48, h: 6.4, parallax: .8, order: -980, seed: 42, wrap: true, draw: (ctx, W, H) =>
+        {
+            for (let k = 0; k < 12; k++) bambooClump(ctx, W * (k / 12) + rnd(40), H, 4, 160, '#2C3A3A', true);
+        },
+    });
+    L.mid = makeLayer({
+        y: 4.2, w: 48, h: 8.4, parallax: .5, order: -970, seed: 43, draw: (ctx, W, H) =>
+        {
+            dinh(ctx, W * .62, H - 6, .9);
+            house(ctx, W * .4, H - 6, 120, 100, false);
+            house(ctx, W * .82, H - 6, 130, 105, false);
+            // đèn lồng trước đình
+            for (const x of [W * .55, W * .69]) { stroke(ctx, [[x, H - 120], [x, H - 100]], 1.5, INK, .2); ell(ctx, x, H - 92, 7, 9, '#E0733A', { line: 1.8 }); }
+            grain(ctx, 0, 0, W, H, .5);
+        },
+    });
+    // cây đa cổ thụ che trên đầu
+    L.tree = makeLayer({
+        y: 6.5, w: 48, h: 14, parallax: .2, order: -960, seed: 44, draw: (ctx, W, H) =>
+        {
+            const tx = W * .36, gy = H - 4;
+            shape(ctx, [[tx - 36, gy], [tx - 22, gy - 120], [tx - 30, gy - 230], [tx + 10, gy - 260], [tx + 26, gy - 150], [tx + 40, gy]], '#4A3628', { line: 3.4 });
+            for (let i = 0; i < 7; i++) stroke(ctx, [[tx - 18 + i * 6, gy - 20], [tx - 22 + i * 7, gy - 200]], 1.5, 'rgba(30,20,15,.5)', 2);
+            // rễ phụ buông xuống
+            for (let i = 0; i < 9; i++) { const x = tx - 160 + i * 40 + rnd(20); stroke(ctx, [[x, gy - 270], [x + jit(6), gy - 120 - rnd(80)]], 1.4, '#5A4434', 2, .8); }
+            for (let i = 0; i < 12; i++) leafCanopy(ctx, tx - 220 + i * 40 + rnd(20), gy - 300 + rnd(60), 70, i % 2 ? '#2E4A30' : '#3A5A3A');
+            grain(ctx, 0, 0, W, H, .5);
+        },
+    });
+    L.ground = groundLayer('#9C8462', '#6E5A44', '#4E6038', 45);
+    L.fore = foreLayer('#22301E', 46);
+    return L;
+}

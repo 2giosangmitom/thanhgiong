@@ -11,6 +11,8 @@ import { assets, game, world } from './state.js';
 import { bakeGiong } from './art/giong.js';
 import { bakeSoldier } from './art/soldier.js';
 import { bakeBoss } from './art/boss.js';
+import { bakeHorse } from './art/horse.js';
+import { bakeVillagers, bakeFeastProps } from './art/villagers.js';
 import { bakeBambooSprites, bakeDrumSun, bakeSoftDot, bakeInkSplat, bakeRelics } from './art/props.js';
 import { initAudio } from './audio/sfx.js';
 import * as music from './audio/music.js';
@@ -65,6 +67,9 @@ function gameInit()
     assets.bamboo = bakeBambooSprites();
     assets.drumSun = bakeDrumSun('#B94B3B');
     assets.relics = bakeRelics();
+    assets.horse = bakeHorse();
+    assets.villagers = bakeVillagers();
+    assets.feast = bakeFeastProps();
     const soft = bakeSoftDot();
     setFxTiles(bakeInkSplat(), soft);
 
@@ -74,7 +79,7 @@ function gameInit()
     prerenderMusic(['menu']);
     setScene(new MenuScene());
     // render trước các bài còn lại khi menu đang chạy
-    ['level1', 'level2', 'level2b', 'victory', 'defeat', 'ending'].forEach((n, i) => setTimeout(() => prerenderMusic([n]), 600 + i * 350));
+    ['level1', 'level2', 'victory', 'defeat', 'ending'].forEach((n, i) => setTimeout(() => prerenderMusic([n]), 600 + i * 350));
 
     // lớp phủ cuối cùng (trên cả UI): chuyển cảnh vệt mực
     engineAddPlugin(undefined, () => drawWipe());

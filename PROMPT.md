@@ -36,3 +36,18 @@ Chèn thêm nhạc nền trong @music/ với file HonPhuDong.wav là ở main me
 ## Prompt 8
 
 @2giosangmitom-commit
+
+## Prompt 9
+
+Hãy check lại nhạc theo đúng thứ tự sau:
+Main menu: nhạc phát khi vừa mở web lên luôn, nhạc: HonPhuDong
+Màn 1: DongSonChienKhuc
+Màn 2: SaintGiong
+Ending: TreXanhVuotNangMoi 
+
+Đoạn thánh gióng bay về trời là cửa ngựa sắt bay về trời sau đó xuất hiện cảnh có bô lão kể chuyện thánh Gióng cho các đứa trẻ trong làng nghe, bối cảnh thời xưa, dạng phim.
+Ở đoạn đầu, trước khi đánh thì cho một mini game là giúp Gióng ăn mau chóng lớn. Ăn bằng nút space bấm càng nhanh ăn càng nhiều tô cơm. Trong vòng 10s.
+
+## Prompt 10
+
+@2giosangmitom-commit

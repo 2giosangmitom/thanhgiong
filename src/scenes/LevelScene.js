@@ -88,7 +88,7 @@ export class LevelScene
     setupLevel1()
     {
         lightSystem.ambientColor = rgb(.86, .76, .68);
-        playMusic('level1');
+        playMusic('level1', .6, 1.5);
         // lửa cháy trên mái nhà ở lớp làng (gắn theo parallax)
         const v = this.layers.village, W = 48 * 30, H = 8.4 * 30;
         for (const [fx, fy] of [[.2, H - 120], [.17, H - 110], [.23, H - 108], [.8, H - 120], [.77, H - 108], [.83, H - 110]])
@@ -166,7 +166,7 @@ export class LevelScene
     setupLevel2()
     {
         lightSystem.ambientColor = rgb(.84, .7, .66);
-        playMusic('level2', .5, 2);
+        playMusic('level2', .6, 2);
         fxEmbers(vec2(0, 4), vec2(60, 8));
         fxLeaves(vec2(0, 13), vec2(60, 2), 1.2);
         new WarFlag(-18, 6.5, true); new WarFlag(-6, 5, true); new WarFlag(13, 6, true);
@@ -199,7 +199,6 @@ export class LevelScene
 
     bossPhase2()
     {
-        playMusic('level2b', .55, .4);
         play('drum'); setTimeout(() => play('drum', undefined, 1, 1.2), 140); setTimeout(() => play('drum', undefined, 1, 1.4), 280);
         lightSystem.ambientColor = rgb(.8, .58, .55);
         showBanner('NỘ KHÍ CỦA TƯỚNG GIẶC!', 'Đòn đao nhanh hơn — hãy cẩn thận', 'level', 1.8);

@@ -44,6 +44,11 @@ export class Soldier extends EngineObject
             if (this.deadAge > 1.1) this.destroy();
             return;
         }
+        if (this.mode === 'march' && this.stopX !== undefined && (this.pos.x - this.stopX) * this.dir >= 0)
+        {
+            this.halted = true; // dàn hàng đứng chờ
+            return;
+        }
         if (this.mode === 'flee' || this.mode === 'march')
         {
             this.pos.x += this.dir * this.speed * (this.mode === 'flee' ? 2 : 1);
@@ -120,6 +125,7 @@ export class Soldier extends EngineObject
         else if (this.mode === 'flee') { this.anim.set('flee'); tile = this.anim.tileInfo; }
         else if (this.hurtT.active()) tile = frameTile(this.sheet, 'hurt', 0);
         else if (this.thrustT.active()) tile = frameTile(this.sheet, 'thrust', 0);
+        else if (this.halted) tile = frameTile(this.sheet, 'walk', 0);
         else { this.anim.set('walk'); tile = this.anim.tileInfo; }
 
         drawShadow(this.pos, 2, .3 * color.a);
