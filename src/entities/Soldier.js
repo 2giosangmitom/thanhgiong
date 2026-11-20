@@ -113,8 +113,8 @@ export class Soldier extends EngineObject
         if (!this.alive)
         {
             tile = frameTile(this.sheet, 'die', 0);
-            angle = -this.dir * this.fall * 1.3;
-            feet = this.pos.add(vec2(0, -this.fall * .8));
+            angle = -this.dir * this.fall * 1.4;
+            feet = this.pos.add(vec2(0, this.fall * .5));
             color = new Color(1, 1, 1, clamp(1.6 - this.deadAge * 1.6));
         }
         else if (this.mode === 'flee') { this.anim.set('flee'); tile = this.anim.tileInfo; }

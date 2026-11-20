@@ -24,3 +24,15 @@ Màn hình main menu đang có 2 nhân vật là thánh gióng và thằng giặ
 ## Prompt 5
 
 @2giosangmitom-commit
+
+## Prompt 6
+
+Hãy sửa lại phím chơi, đổi nút cách thành phím j (roi sắt), e thành k (tre thần). Thêm tính năng lướt nhanh cho nhân vật bằng phím l và sửa lại phần máu thành thanh máu chứ không phải là các trái tim. Con boss lúc chết thì nó đang bị lỗi ngã trên không thay vì xuống đất.
+
+## Prompt 7
+
+Chèn thêm nhạc nền trong @music/ với file HonPhuDong.wav là ở main menu. Và TreXanhVuotNangMoi.wav là nhạc cuối game khi Thánh Gióng bay về trời, thêm sence cuối game đó luôn cho tôi.
+
+## Prompt 8
+
+@2giosangmitom-commit

@@ -37,15 +37,18 @@ function drawRod(ctx, x, y, a, len, glow)
     ell(ctx, bx, by, 4, 4, '#4A4E52', { line: 2 });
 }
 
-function drawArm(ctx, sx, sy, a, elbow, sleeve, skin)
+function drawArm(ctx, sx, sy, a, elbow, sleeve, skin, armor = true)
 {
     const [ex, ey] = seg(sx, sy, a, 15);
     const [hx, hy] = seg(ex, ey, a + elbow, 14);
     limb(ctx, ex, ey, hx, hy, 7.5, skin, 2.6);
     limb(ctx, sx, sy, ex, ey, 10, sleeve, 2.6);
     // vòng cổ tay (giáp tay)
-    const [wx, wy] = seg(ex, ey, a + elbow, 10);
-    ell(ctx, wx, wy, 4.5, 4.5, PAL.vang, { line: 2 });
+    if (armor)
+    {
+        const [wx, wy] = seg(ex, ey, a + elbow, 10);
+        ell(ctx, wx, wy, 4.5, 4.5, PAL.vang, { line: 2 });
+    }
     ell(ctx, hx, hy, 5, 5, skin, { line: 2.5 });
     return [hx, hy];
 }
@@ -90,7 +93,8 @@ export function drawGiong(ctx, p)
     }
 
     // --- tay sau ---
-    drawArm(ctx, sB[0], sB[1], p.armB ?? -.3, p.elbowB ?? .4, '#963A2E', SKIN_D);
+    const armor = !p.noArmor;
+    drawArm(ctx, sB[0], sB[1], p.armB ?? -.3, p.elbowB ?? .4, '#963A2E', SKIN_D, armor);
     // --- chân sau, chân trước ---
     drawLeg(ctx, hip[0] - 3, hip[1], p.legB ?? -.1, p.kneeB ?? .1, PANTS_D, '#D3BE95');
     drawLeg(ctx, hip[0] + 3, hip[1], p.legF ?? .1, p.kneeF ?? .1, PANTS, WRAP);
@@ -103,6 +107,7 @@ export function drawGiong(ctx, p)
     shape(ctx, [[hx - 13, hy], [hx + 13, hy], [nx + 15, ny + 14], [nx + 11, ny], [nx - 10, ny], [nx - 15, ny + 14]], PAL.son, { line: 3.2 });
     // áo giáp ngực vàng + hoạ tiết trống đồng
     const cx = (hx + nx) / 2 + 3, cy = (hy + ny) / 2 - 1;
+    if (armor) {
     shape(ctx, [[cx - 11, cy - 10], [cx + 11, cy - 11], [cx + 13, cy + 8], [cx, cy + 13], [cx - 12, cy + 8]], PAL.vang, { line: 2.6 });
     ell(ctx, cx + 1, cy, 7, 7, '#E8C27A', { line: 2 });
     ctx.save(); ctx.fillStyle = INK;
@@ -113,9 +118,13 @@ export function drawGiong(ctx, p)
         ctx.lineTo(cx + 1 + Math.cos(a) * r, cy + Math.sin(a) * r);
     }
     ctx.closePath(); ctx.fill(); ctx.restore();
+    } else {
+        // áo vải đơn sơ khi đã cởi giáp
+        stroke(ctx, [[nx + 1, ny + 8], [cx + 2, cy + 6], [hx + 3, hy - 4]], 1.8, INK, .5, .6);
+    }
     // đai lưng
     shape(ctx, [[hx - 14, hy - 4], [hx + 14, hy - 4], [hx + 14, hy + 2], [hx - 14, hy + 2]], '#3A2E2B', { line: 2.4, sharp: true });
-    ell(ctx, hx + 2, hy - 1, 3.5, 3.5, PAL.vang, { line: 1.6 });
+    armor && ell(ctx, hx + 2, hy - 1, 3.5, 3.5, PAL.vang, { line: 1.6 });
     // cổ áo
     stroke(ctx, [[nx - 7, ny + 1], [nx + 1, ny + 8], [nx + 9, ny + 1]], 2.2);
 
@@ -158,9 +167,9 @@ export function drawGiong(ctx, p)
         const [ex, ey] = seg(sF[0], sF[1], p.armF ?? .3, 15);
         return seg(ex, ey, (p.armF ?? .3) + (p.elbowF ?? -.6), 14);
     })();
-    if (p.rodBehind) drawRod(ctx, hand[0], hand[1], p.rod ?? -2.6, 74, p.glow);
-    drawArm(ctx, sF[0], sF[1], p.armF ?? .3, p.elbowF ?? -.6, '#A8432F', SKIN);
-    if (!p.rodBehind) drawRod(ctx, hand[0], hand[1], p.rod ?? -2.6, 74, p.glow);
+    if (p.rodBehind && !p.noRod) drawRod(ctx, hand[0], hand[1], p.rod ?? -2.6, 74, p.glow);
+    drawArm(ctx, sF[0], sF[1], p.armF ?? .3, p.elbowF ?? -.6, '#A8432F', SKIN, armor);
+    if (!p.rodBehind && !p.noRod) drawRod(ctx, hand[0], hand[1], p.rod ?? -2.6, 74, p.glow);
     ell(ctx, hand[0], hand[1], 5, 5, SKIN, { line: 2.5 });
 }
 
@@ -197,6 +206,10 @@ export function bakeGiong()
             hurt: { count: 1, pose: () => ({ lean: -.32, armF: -.7, elbowF: -.6, rod: -1.0, legF: .3, kneeF: .3, legB: -.35, kneeB: .2, armB: .9, elbowB: .5, face: 'hurt', bob: 1, scarf: 2, wind: -1 }) },
             cheer: { count: 2, time: .25, pose: i => ({ lean: -.05, armF: 2.25, elbowF: .35, rod: P * .92, armB: -.9 - i * .1, elbowB: .9, legF: .3, kneeF: .05, legB: -.3, kneeB: .05, face: 'shout', scarf: i * 2, wind: 1, glow: i == 1, bob: -i }) },
             slam: { count: 1, pose: () => ({ lean: .28, armF: .5, elbowF: .1, rod: .2, legF: .7, kneeF: 1.0, legB: -.6, kneeB: .5, armB: -1.2, elbowB: .6, bob: 7, face: 'shout', glow: true, scarf: 1, wind: 1 }) },
+            dash: { count: 1, pose: () => ({ lean: .5, armF: -1.3, elbowF: .2, rod: -1.75, legF: 1.05, kneeF: .35, legB: -.95, kneeB: .7, armB: -1.4, elbowB: .4, bob: 4, face: 'shout', scarf: 3, wind: 2.5, rodBehind: true }) },
+            // cảnh cuối: cởi giáp, bỏ roi, bay về trời
+            free: { count: 4, time: .2, pose: (i, n) => { const t = i / n * P * 2; return { noArmor: true, noRod: true, bob: Math.sin(t) * 1.2, armF: .15, elbowF: -.25, armB: -.15, elbowB: .3, legF: .1, kneeF: .05, legB: -.1, kneeB: .05, scarf: t, lean: -.03 }; } },
+            fly: { count: 3, time: .16, pose: i => ({ noArmor: true, noRod: true, armF: 1.95 + i * .06, elbowF: .25, armB: -2.0 - i * .06, elbowB: -.25, legF: .25, kneeF: .5, legB: .05, kneeB: .6, lean: -.08, scarf: i * 2, wind: -1.5, face: 'shout', bob: -i }) },
             dead: { count: 1, pose: () => ({ lean: -.2, armF: -1.2, elbowF: -.3, rod: -1.6, legF: .2, kneeF: .6, legB: .1, kneeB: .7, armB: 1.3, elbowB: .2, face: 'hurt', bob: 0 }) },
         },
     });

@@ -72,7 +72,7 @@ export class MenuScene
     {
         if (this.ready) return;
         this.ready = true;
-        playMusic('menu', .55, 1.5);
+        playMusic('menu', .7, 1.5);
         play('gong');
         const root = this.root = new UIObject(vec2(0, 72), vec2(10));
         root.color = rgb(0, 0, 0, 0); root.lineWidth = 0; root.shadowColor = undefined;
@@ -90,10 +90,11 @@ export class MenuScene
             title: 'HƯỚNG DẪN', width: 600,
             lines: [
                 'A / ←  ·  D / →   Di chuyển',
-                'Space   Roi Sắt — trúng địch +20 Nộ Khí',
-                'E   Tre Thần (cần 100 Nộ Khí) — 3 sát thương quanh Gióng',
+                'J   Roi Sắt — trúng địch +20 Nộ Khí',
+                'K   Tre Thần (cần 100 Nộ Khí) — 3 sát thương quanh Gióng',
+                'L   Lướt nhanh — né được mọi đòn trong lúc lướt',
                 'Esc   Tạm dừng / tiếp tục',
-                'Mẹo: tránh vùng đỏ khi tướng giặc gồng đao;',
+                'Mẹo: lướt qua vùng đỏ khi tướng giặc gồng đao;',
                 'Tre Thần có thể NGẮT đòn đang gồng!',
             ],
             buttons: [{ text: 'Quay lại', onClick: () => { this.root.visible = true; uiSystem.navigationMode = true; } }],

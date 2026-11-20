@@ -20,8 +20,9 @@ npm run preview   # xem thử bản build
 | Phím | Hành động |
 |---|---|
 | `A` / `←`, `D` / `→` | Di chuyển |
-| `Space` | Roi Sắt: đánh trúng được +20 Nộ Khí |
-| `E` | Tre Thần: cần 100 Nộ Khí, gây 3 sát thương quanh Gióng, ngắt được đòn boss đang gồng |
+| `J` | Roi Sắt: đánh trúng được +20 Nộ Khí |
+| `K` | Tre Thần: cần 100 Nộ Khí, gây 3 sát thương quanh Gióng, ngắt được đòn boss đang gồng |
+| `L` | Lướt nhanh: né được mọi đòn trong lúc lướt, hồi chiêu 0,75 giây |
 | `Esc` | Tạm dừng / tiếp tục |
 | `↑` / `↓`, `Enter` | Chọn và xác nhận trong menu |
 
@@ -29,7 +30,9 @@ npm run preview   # xem thử bản build
 
 - **Màn 1 — Phù Đổng rực lửa:** hạ 12 lính giặc. Lính xuất hiện dần từ hai phía, tối đa 2, 3 rồi 4 lính cùng lúc.
 - **Màn 2 — Sóc Sơn: quyết chiến:** đấu Thiết Giáp Tướng (20 HP, 2 giai đoạn). Mỗi nhát đao đều có vùng cảnh báo trên mặt đất.
+- **Cảnh cuối:** Gióng lên đỉnh Sóc Sơn, cởi giáp sắt, để lại roi sắt rồi bay về trời.
 - Có cảnh mở đầu, các bảng Tạm dừng, Thất bại, Qua màn, Chiến thắng và Hướng dẫn.
+- **Nhạc:** `music/HonPhuDong.wav` (menu), `music/TreXanhVuotNangMoi.wav` (cảnh cuối); nhạc trong trận tự sinh.
 
 ## Kỹ thuật
 

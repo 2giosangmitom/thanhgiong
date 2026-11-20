@@ -11,9 +11,10 @@ import { assets, game, world } from './state.js';
 import { bakeGiong } from './art/giong.js';
 import { bakeSoldier } from './art/soldier.js';
 import { bakeBoss } from './art/boss.js';
-import { bakeBambooSprites, bakeDrumSun, bakeSoftDot, bakeInkSplat } from './art/props.js';
+import { bakeBambooSprites, bakeDrumSun, bakeSoftDot, bakeInkSplat, bakeRelics } from './art/props.js';
 import { initAudio } from './audio/sfx.js';
-import { prerenderMusic } from './audio/music.js';
+import * as music from './audio/music.js';
+const { prerenderMusic } = music;
 import { initPost, fxFrame, setFxTiles } from './fx/fx.js';
 import { styleUI } from './ui/panels.js';
 import { drawHud, drawBanners, drawWipe } from './ui/hud.js';
@@ -63,16 +64,17 @@ function gameInit()
     assets.boss = bakeBoss();
     assets.bamboo = bakeBambooSprites();
     assets.drumSun = bakeDrumSun('#B94B3B');
+    assets.relics = bakeRelics();
     const soft = bakeSoftDot();
     setFxTiles(bakeInkSplat(), soft);
 
     // tiện cho kiểm thử trong console (chỉ bản dev)
-    if (import.meta.env.DEV) window.__tg = { assets, game, world, LJS, flow };
+    if (import.meta.env.DEV) window.__tg = { assets, game, world, LJS, flow, music };
 
     prerenderMusic(['menu']);
     setScene(new MenuScene());
     // render trước các bài còn lại khi menu đang chạy
-    ['level1', 'level2', 'level2b', 'victory', 'defeat'].forEach((n, i) => setTimeout(() => prerenderMusic([n]), 600 + i * 350));
+    ['level1', 'level2', 'level2b', 'victory', 'defeat', 'ending'].forEach((n, i) => setTimeout(() => prerenderMusic([n]), 600 + i * 350));
 
     // lớp phủ cuối cùng (trên cả UI): chuyển cảnh vệt mực
     engineAddPlugin(undefined, () => drawWipe());

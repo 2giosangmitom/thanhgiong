@@ -30,7 +30,11 @@
 Giặc Tàu tràn đến làng Phù Đổng, đốt phá và uy hiếp dân làng. Nghe tiếng kêu cứu, Gióng đứng dậy, khoác giáp, cầm roi sắt ra trận. Sau khi đẩy lùi đợt quân đầu tiên, Gióng truy đuổi quân xâm lược đến chân núi Sóc Sơn. Tại đây, **Thiết Giáp Tướng** chặn đường. Gióng phải kết hợp roi sắt và sức mạnh tre thần để đánh bại hắn, mang lại bình yên cho quê hương.
 
 **Mở đầu:** một màn hình tranh minh họa với câu chữ ngắn: “Giặc kéo đến Phù Đổng. Tiếng trống nổi lên. Gióng cầm roi sắt xuất trận!”  
-**Kết thúc:** boss gục xuống, quân giặc rút lui; nền trời sáng dần và hiện chữ “ĐẤT NƯỚC YÊN BÌNH — CHIẾN THẮNG!”.
+**Kết thúc:** boss gục xuống, quân giặc rút lui; nền trời sáng dần và hiện chữ “ĐẤT NƯỚC YÊN BÌNH — CHIẾN THẮNG!”. Sau đó là **cảnh cuối** trên đỉnh Sóc Sơn lúc bình minh, giữa biển mây, với nhạc nền *Tre Xanh Vượt Nắng Mới*:
+1. “Giặc tan, Gióng một mình lên đỉnh núi Sóc Sơn.” — Gióng đi lên giữa đỉnh núi.
+2. “Gióng cởi áo giáp sắt, để lại roi sắt cho quê hương...” — áo giáp hoạ tiết trống đồng và roi sắt nằm lại trên đá.
+3. “...rồi bay thẳng về trời.” — cột sáng từ trời rọi xuống, Gióng bay lên; camera đi theo, xuyên qua mây, trời chuyển dần sang đêm sao.
+4. “Nhân dân nhớ ơn, tôn Gióng là Phù Đổng Thiên Vương.” — một ngôi sao mới loé sáng, hiện chữ **PHÙ ĐỔNG THIÊN VƯƠNG**, rồi đến bảng Chiến thắng (Chơi lại từ đầu / Về menu). Nhấn `Enter` để bỏ qua.
 
 ## 4. Luật chơi chung
 
@@ -45,10 +49,12 @@ Giặc Tàu tràn đến làng Phù Đổng, đốt phá và uy hiếp dân làn
 | Sát thương Tre Thần | 3 | Gây sát thương trong vùng quanh Gióng |
 | Giá Tre Thần | 100 Nộ Khí | Dùng xong trở về 0 |
 | Bất tử sau trúng đòn | 1 giây | Tránh mất máu liên tục khi chạm địch |
+| Lướt nhanh | ~4,6 đơn vị trong 0,18 giây | Bất tử trong lúc lướt; hồi chiêu 0,75 giây |
 
 ### 4.2. Di chuyển và tấn công
 
 - Gióng đi ngang trong giới hạn màn hình và quay mặt theo hướng di chuyển gần nhất.
+- **Lướt nhanh (`L`):** lao nhanh khoảng 4,6 đơn vị theo hướng đang bấm (hoặc hướng đang nhìn) trong 0,18 giây, bất tử suốt lúc lướt và để lại bóng lưu ảnh; hồi chiêu 0,75 giây. Dùng để né đòn đao của boss hoặc thoát vòng vây.
 - Roi Sắt đánh theo hướng Gióng đang nhìn, phạm vi ngắn (gợi ý 75 px tính từ nhân vật trên khung game 960×540).
 - Khi đánh trúng một mục tiêu bằng Roi Sắt, nhận **+20 Nộ Khí**. Một lần vung roi chỉ cộng Nộ Khí tối đa một lần, dù trúng nhiều kẻ địch.
 - **Tre Thần:** khi đủ 100 Nộ Khí, nhấn phím kỹ năng để tre mọc từ đất trong vùng bán kính khoảng 140 px quanh Gióng; gây 3 sát thương lên mỗi địch trong vùng, chỉ một lần mỗi lần kích hoạt.
@@ -69,8 +75,9 @@ Giặc Tàu tràn đến làng Phù Đổng, đốt phá và uy hiếp dân làn
 |---|---|---|
 | `A` / `←` | Đi sang trái | Quay mặt sang trái |
 | `D` / `→` | Đi sang phải | Quay mặt sang phải |
-| `Space` | Đánh Roi Sắt | Có hồi chiêu 0,45 giây |
-| `E` | Dùng Tre Thần | Chỉ khi Nộ Khí đạt 100 |
+| `J` | Đánh Roi Sắt | Có hồi chiêu 0,45 giây |
+| `K` | Dùng Tre Thần | Chỉ khi Nộ Khí đạt 100 |
+| `L` | Lướt nhanh | Theo hướng đang bấm (hoặc hướng đang nhìn); né được mọi đòn trong lúc lướt |
 | `Esc` | Tạm dừng / tiếp tục | Hiện bảng Pause |
 | `Enter` | Xác nhận | Menu, chuyển màn, chơi lại |
 
@@ -203,7 +210,8 @@ Mỗi màn là một chồng `ParallaxLayer` vẽ tay bằng Canvas2D. Hệ số
 - Tre Thần: tiếng tre bật lên + bụi đất xanh/nâu.
 - Trúng đòn: nhân vật nhấp nháy trong thời gian bất tử, âm thanh ngắn.
 - Boss Phase 2: trống dồn một nhịp, ánh đỏ lóe nhẹ.
-- Nhạc nền: **tự sinh bằng code**, không cần file. Bài được soạn theo thang ngũ cung (Do Re Fa Sol La): sáo trúc, đàn gảy, trống cái, trống cơm, phách, cồng, cùng guitar méo tiếng kiểu "metal remix". Các nốt được render sẵn bằng `zzfxG` thành buffer stereo lặp liền mạch. Có các bài: Menu, Màn 1, Màn 2, Màn 2 – pha 2 (dồn dập hơn), Chiến thắng, Thất bại.
+- Nhạc nền thu sẵn (thư mục `music/`): **Hồn Phù Đổng** (`HonPhuDong.wav`) ở menu chính; **Tre Xanh Vượt Nắng Mới** (`TreXanhVuotNangMoi.wav`) ở cảnh cuối. Nếu không tải được file thì dùng nhạc tự sinh thay thế.
+- Nhạc trong trận: **tự sinh bằng code**, không cần file. Bài được soạn theo thang ngũ cung (Do Re Fa Sol La): sáo trúc, đàn gảy, trống cái, trống cơm, phách, cồng, cùng guitar méo tiếng kiểu "metal remix". Các nốt được render sẵn bằng `zzfxG` thành buffer stereo lặp liền mạch. Có các bài: Menu, Màn 1, Màn 2, Màn 2 – pha 2 (dồn dập hơn), Chiến thắng, Thất bại.
 - Hiệu ứng âm thanh: ZzFX (whoosh, clang, tre bật, trống, cồng, gầm...). Chuỗi `AudioEffects`: vang (reverb) cho trống, cồng và nhạc; bộ nén ở kênh master; bộ lọc thông thấp "bóp tiếng" khi tạm dừng hoặc thua.
 - Cảm giác đòn đánh: hitstop (`timeScale = 0` trong vài chục ms), rung camera, chớp màn hình (đỏ khi bị đánh, trắng khi kết liễu), tách màu chromatic khi tung Tre Thần, slow-mo khi hạ boss, số sát thương bay lên, vết mực và tia lửa.
 
@@ -213,14 +221,14 @@ Mỗi màn là một chồng `ParallaxLayer` vẽ tay bằng Canvas2D. Hệ số
 
 - Logo: **THÁNH GIÓNG: METAL RISING**.
 - Nút: **Bắt đầu**, **Hướng dẫn**, **Thoát**.
-- Hướng dẫn ngắn: `A/D: Di chuyển · Space: Roi Sắt · E: Tre Thần · Esc: Tạm dừng`.
+- Hướng dẫn ngắn: `A/D: Di chuyển · J: Roi Sắt · K: Tre Thần · L: Lướt · Esc: Tạm dừng`.
 
 ### HUD trong trận
 
-- **Trên trái:** `♥♥♥♥♥` và thanh Nộ Khí `0/100`.
+- **Trên trái:** thanh máu `MÁU 5/5` (chia 5 vạch, phần máu vừa mất giảm chậm, nháy khi trúng đòn), thanh Nộ Khí `0/100` và thanh hồi chiêu `L — LƯỚT`.
 - **Trên phải màn 1:** `Đã hạ: 0/12`.
 - **Trên cùng giữa màn 2:** thanh máu boss và tên boss.
-- **Khi đủ Nộ Khí:** chữ `E — TRE THẦN!` nhấp nháy nhẹ ở góc dưới.
+- **Khi đủ Nộ Khí:** chữ `K — TRE THẦN!` nhấp nháy nhẹ ở góc dưới.
 
 ### Các màn trạng thái
 
@@ -242,7 +250,7 @@ MÀN 1 — PHÙ ĐỔNG
                          ↓
 MÀN 2 — SÓC SƠN
   ├─ HP = 0 → Game Over → Chơi lại màn 2
-  └─ Boss HP = 0 → Victory → Menu / Chơi lại từ đầu
+  └─ Boss HP = 0 → Chiến thắng → Cảnh cuối (Gióng bay về trời) → Menu / Chơi lại từ đầu
 ```
 
 ## 11. Yêu cầu kỹ thuật tối giản

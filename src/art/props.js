@@ -113,3 +113,26 @@ export function drawSeal(ctx, x, y, s, text = 'GIÓNG')
     ctx.fillText(text, 0, s * .05, s * 1.5);
     ctx.restore();
 }
+
+/** Áo giáp sắt và roi sắt Gióng để lại trên đỉnh núi (cảnh cuối) */
+export function bakeRelics()
+{
+    const fw = 200, fh = 90, res = 2, c = makeCanvas(fw * res, fh * res), ctx = c.getContext('2d');
+    seed(808);
+    ctx.save(); ctx.scale(res, res);
+    // roi sắt nằm ngang
+    const y = fh - 14;
+    shape(ctx, [[18, y - 4], [176, y - 7], [178, y + 1], [18, y + 3]], PAL.sat, { line: 2.4 });
+    for (let x = 36; x < 170; x += 20) stroke(ctx, [[x, y - 5], [x, y + 2]], 1.6, INK, .2);
+    ell(ctx, 180, y - 3, 6, 6, PAL.sat, { line: 2.4 });
+    ell(ctx, 16, y - 1, 5, 5, '#4A4E52', { line: 2 });
+    // áo giáp ngực dựng nghiêng trên roi
+    const cx = 92, cy = y - 30;
+    shape(ctx, [[cx - 30, cy - 22], [cx + 30, cy - 26], [cx + 36, cy + 12], [cx + 2, cy + 28], [cx - 34, cy + 14]], PAL.vang, { line: 3 });
+    ell(ctx, cx + 1, cy, 15, 15, '#E8C27A', { line: 2.4 });
+    drumSun(ctx, cx + 1, cy, 13, INK, .9, 10);
+    stroke(ctx, [[cx - 26, cy - 10], [cx - 20, cy + 10]], 2, 'rgba(255,240,200,.6)', .3);
+    ctx.restore();
+    grain(ctx, 0, 0, c.width, c.height, .4, 1.5);
+    return { tile: tile(vec2(0), vec2(fw * res, fh * res), new TextureInfo(c, true, false, false)), size: vec2(fw / 30, fh / 30) };
+}

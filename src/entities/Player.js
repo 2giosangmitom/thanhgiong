@@ -1,5 +1,5 @@
 // Gióng: di chuyển, Roi Sắt, Tre Thần, nhận sát thương
-import { EngineObject, vec2, rgb, Timer, keyIsDown, keyWasPressed, sign, clamp, time, rand, WHITE, Color, Light, tweenProperty, Ease, setAdditiveBlendMode, drawTile } from 'littlejsengine';
+import { EngineObject, lightSystem, vec2, rgb, Timer, keyIsDown, keyWasPressed, sign, clamp, time, rand, WHITE, Color, Light, tweenProperty, Ease, setAdditiveBlendMode, drawTile } from 'littlejsengine';
 import { CFG, ARENA_HALF, C } from '../config.js';
 import { game, world, assets, isPlaying } from '../state.js';
 import { makeAnimator, frameTile, drawSprite } from '../art/sheet.js';
@@ -8,6 +8,9 @@ import { SlashFx, SplatFx, FloatText, RingFx, fxSparks, fxDust, fxBambooDust, hi
 import { BambooBurst } from './Bamboo.js';
 
 const ATTACK_TIME = .3;
+
+// Phím chiến đấu
+export const KEYS = { attack: 'KeyJ', bamboo: 'KeyK', dash: 'KeyL' };
 
 export class Player extends EngineObject
 {
@@ -24,6 +27,11 @@ export class Player extends EngineObject
         this.iframe = new Timer;
         this.hurtT = new Timer;
         this.slamT = new Timer;
+        this.dashT = new Timer;
+        this.dashCD = new Timer;
+        this.dashDir = 1;
+        this.ghosts = [];
+        this.dodgeShown = false;
         this.hitSet = new Set;
         this.rageGiven = false;
         this.slashSpawned = false;
@@ -46,15 +54,24 @@ export class Player extends EngineObject
         if (this.canAct)
         {
             mx = (keyIsDown('ArrowRight') || keyIsDown('KeyD') ? 1 : 0) - (keyIsDown('ArrowLeft') || keyIsDown('KeyA') ? 1 : 0);
-            if (mx && !this.attackT.active() && !this.slamT.active()) this.dir = mx;
-            if (keyWasPressed('Space') && !this.cooldown.active() && !this.slamT.active()) this.startAttack();
-            if (keyWasPressed('KeyE')) this.tryBamboo();
+            if (mx && !this.attackT.active() && !this.slamT.active() && !this.dashing) this.dir = mx;
+            if (keyWasPressed(KEYS.dash)) this.tryDash(mx);
+            if (keyWasPressed(KEYS.attack) && !this.cooldown.active() && !this.slamT.active() && !this.dashing) this.startAttack();
+            if (keyWasPressed(KEYS.bamboo) && !this.dashing) this.tryBamboo();
         }
         let speed = CFG.playerSpeed;
         if (this.attackT.active()) speed *= .4;
         if (this.slamT.active()) speed = 0;
         if (this.hurtT.active()) speed *= .5;
-        const dx = mx * speed + this.kick;
+        let dx = mx * speed + this.kick;
+        if (this.dashing)
+        {
+            dx = this.dashDir * CFG.dashSpeed;
+            // bóng mờ lưu ảnh
+            if (this.dashTick++ % 2 === 0) this.ghosts.push({ pos: this.pos.copy(), mirror: this.dir < 0, age: 0 });
+        }
+        for (const g of this.ghosts) g.age += 1 / 60;
+        this.ghosts = this.ghosts.filter(g => g.age < .25);
         this.kick *= .82;
         this.pos.x = clamp(this.pos.x + dx, -ARENA_HALF + .8, ARENA_HALF - .8);
         this.moving = !!mx && speed > 0;
@@ -81,6 +98,27 @@ export class Player extends EngineObject
         if (full && !this.rageWasFull) { play('rageFull'); new FloatText(this.pos.add(vec2(0, 4.4)), 'NỘ KHÍ ĐẦY!', C.tre.lerp(WHITE, .4), .7, 1.1); }
         this.rageWasFull = full;
     }
+
+    get dashing() { return this.dashT.active(); }
+
+    /** Lướt nhanh theo hướng đang bấm (hoặc hướng đang nhìn), bất tử trong lúc lướt */
+    tryDash(mx)
+    {
+        if (this.dashCD.active() || this.slamT.active() || this.dashing) return;
+        this.dashDir = mx || this.dir;
+        this.dir = this.dashDir;
+        this.dashT.set(CFG.dashTime);
+        this.dashCD.set(CFG.dashCooldown);
+        this.attackT.unset();
+        this.dashTick = 0;
+        this.dodgeShown = false;
+        play('whoosh', this.pos, 1, 1.5);
+        fxDust(this.pos.add(vec2(-this.dashDir * .4, .1)), .8);
+        chroma(.004);
+    }
+
+    /** Hồi chiêu lướt 0..1 (1 = sẵn sàng), cho HUD */
+    get dashReady() { return this.dashCD.active() ? this.dashCD.getPercent() : 1; }
 
     startAttack()
     {
@@ -158,7 +196,14 @@ export class Player extends EngineObject
     /** Bị đánh: trả về true nếu thực sự mất máu */
     hurt(fromX)
     {
-        if (this.dead || this.iframe.active() || !isPlaying()) return false;
+        if (this.dead || !isPlaying()) return false;
+        if (this.dashing)
+        {
+            // né được đòn nhờ lướt
+            if (!this.dodgeShown) { this.dodgeShown = true; new FloatText(this.pos.add(vec2(0, 4)), 'NÉ!', C.vang.lerp(WHITE, .4), .8); }
+            return false;
+        }
+        if (this.iframe.active()) return false;
         game.hp = Math.max(0, game.hp - 1);
         this.iframe.set(CFG.iframes);
         this.hurtT.set(.28);
@@ -186,9 +231,10 @@ export class Player extends EngineObject
         if (this.dead)
         {
             tile = frameTile(this.sheet, 'dead', 0);
-            angle = -this.dir * this.fallAngle * 1.35;
-            feet = feet.add(vec2(-this.dir * this.fallAngle * .9, -this.fallAngle * .9));
+            angle = -this.dir * this.fallAngle * 1.4;
+            feet = feet.add(vec2(0, this.fallAngle * .5));
         }
+        else if (this.dashing) tile = frameTile(this.sheet, 'dash', 0);
         else if (this.slamT.active()) tile = frameTile(this.sheet, 'slam', 0);
         else if (this.attackT.active()) tile = frameTile(this.sheet, 'attack', t < .2 ? 0 : t < .45 ? 1 : t < .72 ? 2 : 3);
         else if (this.hurtT.active()) tile = frameTile(this.sheet, 'hurt', 0);
@@ -200,9 +246,21 @@ export class Player extends EngineObject
 
         drawShadow(this.pos, 2.2);
 
+        // bóng lưu ảnh khi lướt
+        // (bỏ qua ở lượt emissive của LightSystem: lượt đó cần giữ chế độ cộng sáng)
+        const fxPass = !lightSystem?.emissivePass;
+        if (this.ghosts.length && fxPass)
+        {
+            const dashTile = frameTile(this.sheet, 'dash', 0);
+            setAdditiveBlendMode(true);
+            for (const g of this.ghosts)
+                drawSprite(this.sheet, dashTile, g.pos, g.mirror, rgb(1, .55, .3, .45 * (1 - g.age / .25)));
+            setAdditiveBlendMode(false);
+        }
+
         // hào quang xanh khi đủ Nộ Khí
         const soft = getSoftTile();
-        if (game.rage >= CFG.rageMax && !this.dead && soft)
+        if (game.rage >= CFG.rageMax && !this.dead && soft && fxPass)
         {
             const k = .5 + .5 * Math.sin(time * 8);
             setAdditiveBlendMode(true);
@@ -212,7 +270,7 @@ export class Player extends EngineObject
 
         // nhấp nháy trong thời gian bất tử
         let color = WHITE, additive;
-        if (this.iframe.active() && !this.dead && !this.slamT.active())
+        if (this.iframe.active() && !this.dead && !this.slamT.active() && !this.dashing)
             color = (time * 14 | 0) % 2 ? new Color(1, 1, 1, .35) : WHITE;
         if (this.hurtT.active()) additive = rgb(.6, 0, 0, 0);
         if (this.slamT.active()) additive = rgb(.1, .35, .05, 0);

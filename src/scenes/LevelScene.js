@@ -14,7 +14,7 @@ import { play, muffle, S } from '../audio/sfx.js';
 import { fxFire, fxSmoke, fxEmbers, fxLeaves, fxConfetti, fxSparkle, slowmo, whiteFlash, shake, setDesat, flash, hitstop } from '../fx/fx.js';
 import { showBanner, resetHud, showBossBar, clearBanners } from '../ui/hud.js';
 import { openPanel, closePanel } from '../ui/panels.js';
-import { retryLevel, goMenu, nextLevel, startRun } from './flow.js';
+import { retryLevel, goMenu, nextLevel, startRun, goEnding } from './flow.js';
 import { clawEmblem } from '../art/soldier.js';
 
 /** Cờ giặc tung bay (vẽ mỗi frame bằng drawPoly, gắn với thế giới) */
@@ -228,16 +228,8 @@ export class LevelScene
             showBanner('ĐẤT NƯỚC YÊN BÌNH — CHIẾN THẮNG!', 'Gióng đã đánh tan quân xâm lược', 'big', 3.6);
         });
         this.after(2.4, () => tweenProperty(world.boss, 'alpha', 1, 0, 1.5));
-        this.after(5.4, () =>
-        {
-            const secs = Math.round((performance.now() - game.runStart) / 1000);
-            openPanel({
-                title: 'CHIẾN THẮNG!', title2: 'Thánh Gióng bảo vệ quê hương',
-                lines: [`Tổng số giặc đã hạ: ${game.totalKills} · Thời gian: ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`],
-                buttons: [{ text: 'Chơi lại từ đầu', onClick: startRun }, { text: 'Về menu', onClick: goMenu }],
-                titleColor: C.son, dim: .3,
-            });
-        });
+        // sang cảnh cuối: Gióng bay về trời
+        this.after(6, () => goEnding());
     }
 
     // ------------------------------------------------------------------ chung

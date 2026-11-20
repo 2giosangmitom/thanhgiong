@@ -2,6 +2,15 @@
 // render offline bằng zzfxG thành buffer stereo lặp liền mạch
 import { Sound, zzfxG } from 'littlejsengine';
 import { FX } from './sfx.js';
+// nhạc thu sẵn (Vite đóng gói file vào bản build)
+import honPhuDongUrl from '../../music/HonPhuDong.wav';
+import treXanhUrl from '../../music/TreXanhVuotNangMoi.wav';
+
+/** Bài phát từ file; nếu không tải được thì dùng bài tự sinh thay thế */
+const FILE_SONGS = {
+    menu: { url: honPhuDongUrl, fallback: 'menuGen' },
+    ending: { url: treXanhUrl, fallback: 'victory' },
+};
 
 const SR = 44100;
 
@@ -87,8 +96,8 @@ const rep = (s, n) => s.repeat(n);
 
 // ------------------------------------------------------------- các bài
 const SONGS = {
-    // Menu: sáo ngân, đàn gảy, trống trầm thưa — trầm hùng
-    menu: () => render({
+    // Menu (dự phòng khi không tải được HonPhuDong.wav): sáo ngân, đàn gảy, trống trầm thưa
+    menuGen: () => render({
         bpm: 76, bars: 8, loop: true, gain: .7, tracks: [
             { inst: 'gong', vol: .7, pat: 'x' + '.'.repeat(63) },
             { inst: 'kick', vol: .7, pat: rep('x.......o.......', 8) },
@@ -169,32 +178,53 @@ const SONGS = {
 };
 
 const songs = {};
-let current, currentName;
+let current, currentName, pending;
 
+/** Lấy bài theo tên (tạo khi cần). Bài từ file được tải bất đồng bộ */
 export function getSong(name)
 {
-    return songs[name] ||= SONGS[name]();
+    if (songs[name]) return songs[name];
+    const file = FILE_SONGS[name];
+    if (!file) return songs[name] = SONGS[name]();
+    return songs[name] = new Sound(file.url, 0, 0, undefined, snd =>
+    {
+        if (!snd.isLoaded())
+        {
+            // tải lỗi: chuyển sang bài tự sinh
+            console.warn('Không tải được nhạc', file.url, '- dùng nhạc tự sinh');
+            songs[name] = getSong(file.fallback);
+        }
+        if (pending && pending.name === name) { const p = pending; pending = undefined; startSong(p.name, p.volume, p.fade); }
+    });
 }
 
-/** Phát nhạc với fade, mặc định lặp */
-export function playMusic(name, volume = .55, fade = 1)
+const isLoop = name => name !== 'victory' && name !== 'defeat';
+
+function startSong(name, volume, fade)
 {
-    if (currentName === name && current) return;
-    stopMusic(fade * .8);
     const snd = getSong(name);
-    const loop = name !== 'victory' && name !== 'defeat';
-    const inst = snd.play(undefined, .001, 1, 0, loop);
+    const inst = snd.play(undefined, .001, 1, 0, isLoop(name));
     inst?.setVolume(volume, fade);
     current = inst; currentName = name;
+}
+
+/** Phát nhạc với fade, mặc định lặp; bài từ file chưa tải xong thì phát ngay khi tải xong */
+export function playMusic(name, volume = .55, fade = 1)
+{
+    if (currentName === name && (current || pending)) return;
+    stopMusic(fade * .8);
+    const snd = getSong(name);
+    if (!snd.isLoaded()) { pending = { name, volume, fade }; currentName = name; return; }
+    startSong(name, volume, fade);
 }
 
 export function stopMusic(fade = .6)
 {
     current?.stop(fade);
-    current = undefined; currentName = undefined;
+    current = undefined; currentName = undefined; pending = undefined;
 }
 
-/** Render trước các bài (tránh giật khi chuyển màn) */
+/** Render / tải trước các bài (tránh giật khi chuyển màn) */
 export function prerenderMusic(names = Object.keys(SONGS))
 {
     for (const n of names) getSong(n);

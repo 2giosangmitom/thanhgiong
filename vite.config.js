@@ -13,6 +13,9 @@ export default defineConfig({
             // duplicate render loop. Replace HMR with a full page reload.
             name: 'littlejs-full-reload',
             handleHotUpdate({ server, modules, timestamp }) {
+                // chỉ tải lại khi file thuộc mã nguồn game thay đổi (bỏ qua file
+                // lớn đang được ghi như nhạc .wav, ảnh nháp...)
+                if (!modules.length) return [];
                 // invalidate manually since returning [] skips normal HMR
                 const invalidatedModules = new Set();
                 for (const mod of modules)

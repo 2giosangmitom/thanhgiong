@@ -77,9 +77,9 @@ export function makeAnimator(sheet, names)
     return new SpriteAnimator(clips);
 }
 
-/** Vẽ một frame tại vị trí chân, có lật trái/phải */
+/** Vẽ một frame tại vị trí chân, có lật trái/phải; xoay quanh điểm chân (để ngã xuống đất đúng chỗ) */
 export function drawSprite(sheet, tileInfo, feet, mirror, color = WHITE, additive, scale = 1, angle = 0)
 {
-    const off = vec2(mirror ? -sheet.offset.x : sheet.offset.x, sheet.offset.y).scale(scale);
+    const off = vec2(mirror ? -sheet.offset.x : sheet.offset.x, sheet.offset.y).scale(scale).rotate(angle);
     drawTile(feet.add(off), sheet.size.scale(scale), tileInfo, color, angle, mirror, additive);
 }

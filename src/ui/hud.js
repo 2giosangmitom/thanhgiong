@@ -5,13 +5,13 @@ import { game, world } from '../state.js';
 import { withUI, text, brushBand, roughRect, heart } from './draw2d.js';
 
 const hud = {
-    rage: 0, bossHP: CFG.bossHP, bossLag: CFG.bossHP, lastHP: CFG.playerHP, heartPop: [], killsPop: 0, lastKills: 0,
+    rage: 0, bossHP: CFG.bossHP, bossLag: CFG.bossHP, lastHP: CFG.playerHP, hp: CFG.playerHP, hpLag: CFG.playerHP, hpHit: -9, killsPop: 0, lastKills: 0,
     showBoss: 0, visible: true,
 };
 
 export function resetHud()
 {
-    hud.rage = game.rage; hud.bossHP = hud.bossLag = CFG.bossHP; hud.lastHP = game.hp; hud.heartPop = [];
+    hud.rage = game.rage; hud.bossHP = hud.bossLag = CFG.bossHP; hud.lastHP = hud.hp = hud.hpLag = game.hp; hud.hpHit = -9;
     hud.lastKills = game.kills; hud.killsPop = 0; hud.showBoss = 0;
 }
 export const showBossBar = () => tweenProperty(hud, 'showBoss', 0, 1, .6, { ease: Ease.OUT(Ease.BACK), useRealTime: true });
@@ -22,25 +22,39 @@ export function drawHud()
     const t = timeReal;
     // nội suy giá trị hiển thị
     hud.rage = lerp(hud.rage, game.rage, .18);
-    if (game.hp < hud.lastHP) for (let i = game.hp; i < hud.lastHP; i++) hud.heartPop[i] = t;
+    if (game.hp < hud.lastHP) hud.hpHit = t;
     hud.lastHP = game.hp;
+    hud.hp = lerp(hud.hp, game.hp, .25);
+    hud.hpLag = hud.hpLag > hud.hp ? Math.max(hud.hp, hud.hpLag - .03) : hud.hp;
     if (game.kills !== hud.lastKills) { hud.killsPop = t; hud.lastKills = game.kills; }
     hud.bossHP = lerp(hud.bossHP, game.bossHP, .25);
     hud.bossLag = hud.bossLag > hud.bossHP ? hud.bossLag - .04 : hud.bossHP;
 
     withUI((ctx, W) =>
     {
-        // ---- máu (trái tim)
-        brushBand(ctx, 14, 16, 232, 86, 'rgba(241,225,190,.82)', 3);
-        for (let i = 0; i < CFG.playerHP; i++)
+        // ---- thanh máu
+        brushBand(ctx, 14, 14, 232, 104, 'rgba(241,225,190,.82)', 3);
         {
-            const pop = hud.heartPop[i] ? clamp(1 - (t - hud.heartPop[i]) / .5) : 0;
-            const x = 40 + i * 38 + (pop ? Math.sin(t * 60) * 3 * pop : 0), y = 40;
-            const full = i < game.hp;
-            heart(ctx, x, y, 15 * (1 + pop * .5), full ? PAL.son : 'rgba(53,44,42,.15)');
+            const hit = clamp(1 - (t - hud.hpHit) / .45), sx = hit ? Math.sin(t * 70) * 4 * hit : 0;
+            const bx = 26 + sx, by = 26, bw = 206, bh = 24, max = CFG.playerHP;
+            const low = game.hp <= 1 && game.hp > 0;
+            roughRect(ctx, bx, by, bw, bh, 'rgba(53,44,42,.6)', PAL.muc, 3, 1);
+            // phần máu vừa mất (trắng, giảm chậm)
+            ctx.fillStyle = '#F6EAD0'; ctx.fillRect(bx + 2, by + 2, (bw - 4) * clamp(hud.hpLag / max), bh - 4);
+            const g = ctx.createLinearGradient(0, by, 0, by + bh);
+            g.addColorStop(0, '#E2705A'); g.addColorStop(1, '#8E2E24');
+            ctx.save();
+            if (low) { ctx.shadowColor = 'rgba(255,80,60,.9)'; ctx.shadowBlur = 10 + Math.sin(t * 10) * 6; }
+            ctx.fillStyle = g; ctx.fillRect(bx + 2, by + 2, (bw - 4) * clamp(hud.hp / max), bh - 4);
+            ctx.restore();
+            if (hit) { ctx.fillStyle = `rgba(255,255,255,${hit * .6})`; ctx.fillRect(bx + 2, by + 2, bw - 4, bh - 4); }
+            // vạch chia từng máu
+            ctx.strokeStyle = PAL.muc; ctx.lineWidth = 2;
+            for (let i = 1; i < max; i++) { const x = bx + bw * i / max; ctx.beginPath(); ctx.moveTo(x, by + 3); ctx.lineTo(x, by + bh - 3); ctx.stroke(); }
+            text(ctx, `MÁU ${game.hp}/${max}`, bx + bw / 2, by + bh / 2 + 1, 13, PAL.giay, { line: 3 });
         }
         // ---- Nộ Khí
-        const bx = 26, by = 64, bw = 206, bh = 20, full = game.rage >= CFG.rageMax;
+        const bx = 26, by = 60, bw = 206, bh = 20, full = game.rage >= CFG.rageMax;
         roughRect(ctx, bx, by, bw, bh, 'rgba(53,44,42,.55)', PAL.muc, 3, 2);
         const fw = bw * clamp(hud.rage / CFG.rageMax);
         if (fw > 1)
@@ -56,6 +70,14 @@ export function drawHud()
             for (let x = bx + 34; x < bx + fw - 4; x += 34) { ctx.beginPath(); ctx.moveTo(x, by + 3); ctx.lineTo(x, by + bh - 3); ctx.stroke(); }
         }
         text(ctx, `NỘ KHÍ ${Math.round(game.rage)}/${CFG.rageMax}`, bx + bw / 2, by + bh / 2 + 1, 12, full ? '#F4FFE8' : PAL.giay, { line: 3 });
+
+        // ---- hồi chiêu lướt (L)
+        {
+            const k = world.player.dashReady, ready = k >= 1, y = 90;
+            roughRect(ctx, 26, y, 120, 12, 'rgba(53,44,42,.55)', PAL.muc, 2, 5);
+            ctx.fillStyle = ready ? '#E8B860' : '#9C8A6A'; ctx.fillRect(28, y + 2, 116 * k, 8);
+            text(ctx, 'L — LƯỚT', 190, y + 6, 12, ready ? PAL.muc : 'rgba(53,44,42,.5)', { line: 0, shadow: false });
+        }
 
         // ---- số giặc đã hạ (màn 1)
         if (game.level === 1)
@@ -86,7 +108,7 @@ export function drawHud()
         {
             const a = .65 + .35 * Math.sin(t * 7), s = 1 + .04 * Math.sin(t * 7);
             brushBand(ctx, W / 2 - 130, 482, 260, 40, `rgba(62,107,58,${.75 * a})`, 12);
-            text(ctx, 'E — TRE THẦN!', W / 2, 503, 24 * s, '#F4FFE8', { line: 4, alpha: a + .2 });
+            text(ctx, 'K — TRE THẦN!', W / 2, 503, 24 * s, '#F4FFE8', { line: 4, alpha: a + .2 });
         }
     });
 }

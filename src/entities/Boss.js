@@ -205,8 +205,9 @@ export class Boss extends EngineObject
             case 'roar': tile = frameTile(sh, 'windup', 2); break;
             case 'dead':
                 tile = frameTile(sh, 'stagger', 0);
-                angle = -this.dir * this.fall * 1.4;
-                feet = this.pos.add(vec2(-this.dir * this.fall * 1.6, -this.fall * 1.5));
+                // ngã ngửa quanh gót chân, thân nằm trên mặt đất
+                angle = -this.dir * this.fall * 1.5;
+                feet = this.pos.add(vec2(this.dir * this.fall * .4, this.fall * 1.05));
                 break;
             default:
                 this.anim.set(this.state === 'enter' || (this.state === 'approach' && isPlaying()) ? 'walk' : 'idle');
@@ -239,7 +240,8 @@ export class Boss extends EngineObject
 
         // hào quang đỏ giai đoạn 2
         const soft = getSoftTile();
-        if (this.phase === 2 && this.state !== 'dead' && soft)
+        const fxPass = !lightSystem?.emissivePass;
+        if (this.phase === 2 && this.state !== 'dead' && soft && fxPass)
         {
             setAdditiveBlendMode(true);
             drawTile(this.pos.add(vec2(0, 3)), vec2(7.5 + Math.sin(time * 9) * .6, 8.5), soft, rgb(1, .15, .05, .3));
@@ -253,7 +255,7 @@ export class Boss extends EngineObject
         drawSprite(sh, tile, feet, this.dir < 0, new Color(1, 1, 1, this.alpha), additive, 1, angle);
 
         // mắt đỏ rực giai đoạn 2
-        if (this.phase === 2 && this.state !== 'dead' && soft)
+        if (this.phase === 2 && this.state !== 'dead' && soft && fxPass)
         {
             setAdditiveBlendMode(true);
             drawTile(this.pos.add(vec2(this.dir * .55, 5.15)), vec2(1.2), soft, rgb(1, .2, .1, .9));

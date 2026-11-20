@@ -40,6 +40,9 @@ export const CFG = {
     iframes: 1,
     playerSpeed: .16,         // đơn vị / frame
     playerHalfW: .5,
+    dashSpeed: .42,           // đơn vị / frame (~4,6 đơn vị mỗi lần lướt)
+    dashTime: .18,
+    dashCooldown: .75,
 
     soldierHP: 2,
     soldierSpeed: .16 * .64,  // chậm hơn Gióng ~36%

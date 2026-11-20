@@ -9,6 +9,7 @@ import { clearTimeFx } from '../fx/fx.js';
 import { MenuScene } from './MenuScene.js';
 import { IntroScene } from './IntroScene.js';
 import { LevelScene } from './LevelScene.js';
+import { EndingScene } from './EndingScene.js';
 
 function go(makeScene)
 {
@@ -25,6 +26,8 @@ function go(makeScene)
 export const goMenu = () => go(() => new MenuScene(true));
 export const goIntro = () => { resetRun(); go(() => new IntroScene); };
 export const goLevel = (level) => go(() => new LevelScene(level));
+/** Cảnh cuối: Gióng bay về trời */
+export const goEnding = () => go(() => new EndingScene);
 export const startRun = () => { resetRun(); game.runStart = performance.now(); go(() => new LevelScene(1)); };
 
 /** Chơi lại màn hiện tại: hồi đầy máu, Nộ Khí trở về giá trị lúc vào màn */
@@ -51,7 +54,7 @@ export function pauseGame()
     muffle(true);
     openPanel({
         title: 'TẠM DỪNG',
-        lines: ['A/D: Di chuyển · Space: Roi Sắt · E: Tre Thần'],
+        lines: ['A/D: Di chuyển · J: Roi Sắt · K: Tre Thần · L: Lướt'],
         buttons: [
             { text: 'Tiếp tục', onClick: resumeGame },
             { text: 'Chơi lại màn', onClick: retryLevel },

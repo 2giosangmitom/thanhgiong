@@ -100,7 +100,7 @@ export function openPanel(o)
         return btn;
     });
 
-    // tránh bấm nhầm khi đang đánh (Space/Enter) — kích hoạt nút sau một nhịp
+    // tránh bấm nhầm khi đang chơi (Space/Enter) — kích hoạt nút sau một nhịp
     const arm = new Timer(.45, true);
     root.onUpdate = () =>
     {

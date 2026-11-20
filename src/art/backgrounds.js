@@ -16,7 +16,7 @@ const TAU = Math.PI * 2;
 export function makeLayer(o)
 {
     const res = o.res || 1.6, W = o.w * PX, H = o.h * PX;
-    const layer = new ParallaxLayer(vec2(o.x || 0, o.y), vec2(o.w, o.h), vec2(o.parallax, 0), o.order,
+    const layer = new ParallaxLayer(vec2(o.x || 0, o.y), vec2(o.w, o.h), vec2(o.parallax, o.parallaxY || 0), o.order,
         (ctx, size) =>
         {
             ctx.save();
@@ -464,5 +464,89 @@ export function buildMenuLayers(camY)
             grain(ctx, 0, 0, W, H, .8);
         },
     });
+    return L;
+}
+
+// ------------------------------------------------------------ CẢNH CUỐI: ĐỈNH SÓC SƠN, GIÓNG BAY VỀ TRỜI
+export function buildEndingLayers()
+{
+    const L = {};
+    // bầu trời cao: bình minh ở dưới, lên cao chuyển dần sang trời sao
+    L.sky = makeLayer({
+        y: 20, w: 34, h: 34, parallax: 1, parallaxY: .75, order: -1000, res: .9, seed: 31, draw: (ctx, W, H) =>
+        {
+            gradient(ctx, W, H, [[0, '#141A3A'], [.25, '#2E3F78'], [.5, '#6F8FC2'], [.7, '#E9C9A0'], [.85, '#F6D58C'], [1, '#F2B870']]);
+            // sao
+            for (let i = 0; i < 160; i++)
+            {
+                const y = rnd(H * .45), a = 1 - y / (H * .45);
+                ctx.fillStyle = `rgba(255,248,220,${.3 + a * .7})`;
+                const r = rnd(.6, 2.2);
+                ctx.beginPath(); ctx.arc(rnd(W), y, r, 0, TAU); ctx.fill();
+            }
+            // tia nắng bình minh
+            ctx.save(); ctx.globalAlpha = .18; ctx.fillStyle = '#FFF1C8';
+            for (let i = 0; i < 9; i++)
+            {
+                const a = -Math.PI / 2 + (i - 4) * .16;
+                ctx.beginPath(); ctx.moveTo(W * .62, H * .86);
+                ctx.lineTo(W * .62 + Math.cos(a - .03) * H, H * .86 + Math.sin(a - .03) * H);
+                ctx.lineTo(W * .62 + Math.cos(a + .03) * H, H * .86 + Math.sin(a + .03) * H);
+                ctx.fill();
+            }
+            ctx.restore();
+            sun(ctx, W * .62, H * .86, 60, '#FFE29A', 'rgba(255,230,170,.75)');
+            grain(ctx, 0, 0, W, H, .4);
+        },
+    });
+    // mây trên cao (bay qua khi camera đi lên)
+    L.cloudsHigh = makeLayer({
+        y: 21, w: 46, h: 12, parallax: .9, parallaxY: .35, order: -990, wrap: true, seed: 32, res: 1, draw: (ctx, W, H) =>
+        {
+            for (let i = 0; i < 9; i++) cloud(ctx, 100 + i * (W - 200) / 8 + jit(40), H * rnd(.2, .95), rnd(.8, 1.5), 'rgba(255,250,240,.9)');
+        },
+    });
+    // dãy núi xa nhô lên khỏi biển mây
+    L.far = makeLayer({
+        y: 2.4, w: 48, h: 6, parallax: .85, order: -980, seed: 33, wrap: true, draw: (ctx, W, H) =>
+        {
+            hills(ctx, W, H, H * .55, 55, [[2, .5], [5, .35], [9, .2]], '#9C9CC0', 0, 2.2);
+            hills(ctx, W, H, H * .75, 40, [[3, .5], [7, .3]], '#8486AE', 1.7, 2.4);
+        },
+    });
+    // biển mây dưới chân núi
+    L.mist = makeLayer({
+        y: .6, w: 48, h: 3.4, parallax: .6, order: -970, seed: 34, wrap: true, res: 1.2, draw: (ctx, W, H) =>
+        {
+            for (let i = 0; i < 26; i++) cloud(ctx, i * W / 25, H * rnd(.45, .8), rnd(.8, 1.4), 'rgba(255,246,232,.95)');
+            ctx.fillStyle = 'rgba(255,246,232,.95)'; ctx.fillRect(0, H * .7, W, H * .3);
+        },
+    });
+    // đỉnh núi đá nơi Gióng đứng
+    L.summit = makeLayer({
+        y: -1.3, w: 48, h: 5, parallax: 0, order: -900, seed: 35, draw: (ctx, W, H) =>
+        {
+            const gy = 1.3 * PX;
+            shape(ctx, [[W * .18, H + 10], [W * .22, gy + 6], [W * .3, gy - 6], [W * .45, gy - 2], [W * .55, gy - 4], [W * .7, gy - 6], [W * .78, gy + 8], [W * .84, H + 10]], '#7E7468', { line: 3.4, jitter: 1.5 });
+            for (let i = 0; i < 30; i++)
+            {
+                const x = W * rnd(.24, .76), y = gy + rnd(10, H - gy);
+                stroke(ctx, [[x, y], [x + rnd(10, 40), y + rnd(5, 25)]], 1.6, 'rgba(53,44,42,.4)', 1);
+            }
+            grassLine(ctx, W * .5, gy - 4, '#5E7A4A', 0, 0);
+            for (let i = 0; i < 90; i++)
+            {
+                const x = W * rnd(.25, .75), hh = rnd(8, 18);
+                stroke(ctx, [[x, gy - 2], [x + jit(4), gy - hh]], 2, '#5E7A4A', .3, .9);
+            }
+            // thông già bên trái, bụi tre bên phải
+            const tx = W * .33;
+            stroke(ctx, [[tx, gy - 2], [tx - 10, gy - 80], [tx + 6, gy - 130]], 12, '#4A3628', 1.5);
+            for (const [dx, dy, r] of [[-30, -120, 40], [20, -140, 46], [-6, -170, 34]]) leafCanopy(ctx, tx + dx, gy + dy, r, '#3E5A40');
+            bambooClump(ctx, W * .68, gy, 5, 170, '#4E7646');
+            grain(ctx, 0, 0, W, H, .6);
+        },
+    });
+    L.fore = foreLayer('#2F4528', 36);
     return L;
 }
